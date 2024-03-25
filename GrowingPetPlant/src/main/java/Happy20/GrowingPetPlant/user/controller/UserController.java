@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/v1/user")
+@RequestMapping("user")
 @AllArgsConstructor
 public class UserController {
 
@@ -16,7 +16,6 @@ public class UserController {
 
     @GetMapping("/test")
     public User doTest() {
-        return userService.makeTestUser();
+        return (userService.makeTestUser());
     }
-
 }

@@ -15,10 +15,9 @@ public class UserService {
     @Transactional
     public User makeTestUser() {
         User saveUser = User.builder()
-                .name("테스트 유저 이름")
+                .name("test user")
                 .build();
 
-        return userRepository.save(saveUser);
+        return (userRepository.save(saveUser));
     }
-
 }
