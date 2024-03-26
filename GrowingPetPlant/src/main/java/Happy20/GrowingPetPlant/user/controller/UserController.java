@@ -46,10 +46,11 @@ public class UserController {
 
     // 로그인
     @GetMapping("/login")
-    public String login(@RequestParam String id, @RequestParam String password){
+    public ResponseEntity<String> login(@RequestParam("id") String id, @RequestParam("password") String password) {
         if(userService.validationLogin(id, password)){
-            return "로그인 성공";
+            return ResponseEntity.status(HttpStatus.OK).body("로그인에 성공했습니다.");
         }
-        return "로그인 실패";
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인에 실패했습니다.");
     }
 }

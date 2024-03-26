@@ -15,7 +15,6 @@ public class UserService {
 
     @Transactional
     public boolean signupUser(User newUser) {
-
         if (userRepository.existsById(newUser.getId()))
             return (false);
         userRepository.save(newUser);
@@ -24,17 +23,17 @@ public class UserService {
 
     @Transactional
     public boolean idCheck(String id) {
-
         if (userRepository.existsById(id))
             return (false);
         return (true);
     }
 
+    @Transactional
     public boolean validationLogin(String id, String password){
         User user = userRepository.findById(id);
         if(user != null){
-            return user.getPassword().equals(password);
+            return (user.getPassword().equals(password));
         }
-        return false;
+        return (false);
     }
 }
