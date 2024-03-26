@@ -3,19 +3,31 @@ package Happy20.GrowingPetPlant.user.service;
 import Happy20.GrowingPetPlant.user.domain.User;
 import Happy20.GrowingPetPlant.user.service.port.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
 
-    //생성자 - UserRepository 타입의 객체 주입
-    @Autowired
-    public UserService(UserRepository userRepository){
-        this.userRepository = userRepository;
+    @Transactional
+    public boolean signupUser(User newUser) {
+
+        if (userRepository.existsById(newUser.getId()))
+            return (false);
+        userRepository.save(newUser);
+        return (true);
+    }
+
+    @Transactional
+    public boolean idCheck(String id) {
+
+        if (userRepository.existsById(id))
+            return (false);
+        return (true);
     }
 
     public boolean validationLogin(String id, String password){
@@ -25,5 +37,4 @@ public class UserService {
         }
         return false;
     }
-
 }
