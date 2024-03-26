@@ -13,17 +13,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    /*
-        회원가입 API
-        1. 아이디 중복 검사
-        2.
-     */
+    // 회원가입 api
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody PostSignupReq postSignupReq) {
 
@@ -40,13 +35,21 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입에 실패했습니다.");
     }
 
+    // 회원가입 - 아이디 중복 검사
     @GetMapping("/idCheck")
-    public ResponseEntity<String> signup(@RequestParam("id") String id)
-    {
+    public ResponseEntity<String> signup(@RequestParam("id") String id) {
         if (userService.idCheck(id))
             return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 아이디입니다.");
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용할 수 없는 아이디입니다.");
     }
 
+    // 로그인
+    @GetMapping("/login")
+    public String login(@RequestParam String id, @RequestParam String password){
+        if(userService.validationLogin(id, password)){
+            return "로그인 성공";
+        }
+        return "로그인 실패";
+    }
 }
