@@ -1,6 +1,7 @@
 package Happy20.GrowingPetPlant.user.service;
 
 import Happy20.GrowingPetPlant.user.domain.User;
+import Happy20.GrowingPetPlant.user.dto.PostSignupReq;
 import Happy20.GrowingPetPlant.user.service.port.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,19 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User makeTestUser() {
-        User saveUser = User.builder()
-                .name("test user")
-                .build();
+    public boolean signupUser(User newUser) {
 
-        return (userRepository.save(saveUser));
+        if (userRepository.existsById(newUser.getId()))
+            return (false);
+        userRepository.save(newUser);
+        return (true);
+    }
+
+    @Transactional
+    public boolean idCheck(String id) {
+
+        if (userRepository.existsById(id))
+            return (false);
+        return (true);
     }
 }
