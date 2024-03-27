@@ -1,6 +1,7 @@
 package Happy20.GrowingPetPlant.user.service;
 
 import Happy20.GrowingPetPlant.user.domain.User;
+import Happy20.GrowingPetPlant.user.dto.GetLoginReq;
 import Happy20.GrowingPetPlant.user.service.port.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,11 +30,11 @@ public class UserService {
     }
 
     @Transactional
-    public boolean validationLogin(String id, String password){
-        User user = userRepository.findById(id);
-        if(user != null){
-            return (user.getPassword().equals(password));
-        }
-        return (false);
+    public boolean validationLogin(GetLoginReq getLoginReq){
+        User user = userRepository.findById(getLoginReq.getId());
+        if(user != null)
+            return (user.getPassword().equals(getLoginReq.getPassword()));
+        else
+            return (false);
     }
 }

@@ -1,6 +1,7 @@
 package Happy20.GrowingPetPlant.user.controller;
 
 import Happy20.GrowingPetPlant.user.domain.User;
+import Happy20.GrowingPetPlant.user.dto.GetLoginReq;
 import Happy20.GrowingPetPlant.user.dto.PostSignupReq;
 import Happy20.GrowingPetPlant.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,8 @@ public class UserController {
 
     // 로그인
     @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestParam("id") String id, @RequestParam("password") String password) {
-        if(userService.validationLogin(id, password)){
+    public ResponseEntity<String> login(@RequestBody GetLoginReq getLoginReq) {
+        if(userService.validationLogin(getLoginReq)){
             return ResponseEntity.status(HttpStatus.OK).body("로그인에 성공했습니다.");
         }
         else
