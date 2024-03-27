@@ -1,4 +1,4 @@
-package Happy20.GrowingPetPlant.user.domain;
+package Happy20.GrowingPetPlant.User.Domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -31,4 +31,5 @@ public class User {
         this.user_name = user_name;
         this.phone_number = phone_number;
     }
+    public Long getUserNumber() { return user_number; }
 }

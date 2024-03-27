@@ -1,4 +1,4 @@
-package Happy20.GrowingPetPlant.user.dto;
+package Happy20.GrowingPetPlant.User.DTO;
 
 import lombok.Builder;
 import lombok.Data;
