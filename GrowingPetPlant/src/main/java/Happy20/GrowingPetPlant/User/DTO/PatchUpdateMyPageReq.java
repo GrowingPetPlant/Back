@@ -6,8 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class PostSignupReq {
-
+public class PatchUpdateMyPageReq {
     private Long userNumber;
 
     private String id;
@@ -23,7 +22,8 @@ public class PostSignupReq {
     private String plantName;
 
     @Builder
-    public PostSignupReq(String id, String password, String userName, String phoneNumber, String plantType, String plantName) {
+    public PatchUpdateMyPageReq(Long userNumber, String id, String password, String userName, String phoneNumber, String plantType, String plantName) {
+        this.userNumber = userNumber;
         this.id = id;
         this.password = password;
         this.userName = userName;

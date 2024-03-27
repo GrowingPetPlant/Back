@@ -13,19 +13,23 @@ public class UserPlant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long plant_number;
+    @Column(name = "plant_number")
+    private Long plantNumber;
 
-    private String plant_name;
+    @Column(name = "plant_name")
+    private String plantName;
 
-    private String plant_type;
+    @Column(name = "plant_type")
+    private String plantType;
 
-    private Long user_number;
+    @Column(name = "user_number")
+    private Long userNumber;
 
     @Builder
     //인수없는 생성자 자동으로 생성됨(NoArgsConstructor), 생성자
-    public UserPlant(String plant_name, String plant_type, Long user_number) {
-        this.plant_name = plant_name;
-        this.plant_type = plant_type;
-        this.user_number = user_number;
+    public UserPlant(String plantName, String plantType, Long userNumber) {
+        this.plantName = plantName;
+        this.plantType = plantType;
+        this.userNumber = userNumber;
     }
 }
