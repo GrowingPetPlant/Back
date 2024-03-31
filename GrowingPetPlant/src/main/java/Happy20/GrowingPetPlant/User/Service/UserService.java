@@ -119,12 +119,9 @@ public class UserService {
         if (user == null)
             return (null);
 
-        if (!getFindUserPwdReq.getUserName().equals(user.getUserName()))
+        if (getFindUserPwdReq.getUserName().equals(user.getUserName()))
+            return (user.getPassword());
+        else
             return (null);
-
-        if (!getFindUserPwdReq.getPhoneNumber().equals(user.getPhoneNumber()))
-            return (null);
-
-        return (user.getPassword());
     }
 }

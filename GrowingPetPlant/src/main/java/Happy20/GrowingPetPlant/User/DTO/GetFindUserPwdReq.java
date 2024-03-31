@@ -12,13 +12,10 @@ public class GetFindUserPwdReq {
 
     private String userName;
 
-    private String phoneNumber;
-
 
     @Builder
     public GetFindUserPwdReq(String userName, String id, String phoneNumber) {
         this.userName = userName;
         this.id = id;
-        this.phoneNumber=  phoneNumber;
     }
 }
