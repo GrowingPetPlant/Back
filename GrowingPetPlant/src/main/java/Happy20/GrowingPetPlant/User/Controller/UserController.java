@@ -1,11 +1,11 @@
 package Happy20.GrowingPetPlant.User.Controller;
 
-import Happy20.GrowingPetPlant.User.DTO.GetLoginReq;
-import Happy20.GrowingPetPlant.User.DTO.PatchUpdateMyPageReq;
-import Happy20.GrowingPetPlant.User.DTO.PostSignupReq;
+import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
@@ -41,19 +42,50 @@ public class UserController {
     // 로그인 api
     @GetMapping("/login")
     public ResponseEntity<String> login(@RequestBody GetLoginReq getLoginReq) {
-        if(userService.validationLogin(getLoginReq)){
+        if (userService.validationLogin(getLoginReq)) {
             return ResponseEntity.status(HttpStatus.OK).body("로그인에 성공했습니다.");
-        }
-        else
+        } else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인에 실패했습니다.");
     }
 
+    // 마이페이지 수정 api
     @PatchMapping("/mypage")
     public ResponseEntity<String> updateMyPage(@RequestBody PatchUpdateMyPageReq patchUpdateMyPageReq) {
-        if(userService.validateUpdateMyPage(patchUpdateMyPageReq)){
+        if (userService.validateUpdateMyPage(patchUpdateMyPageReq)) {
             return ResponseEntity.status(HttpStatus.OK).body("마이페이지가 수정됐습니다.");
-        }
-        else
+        } else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마이페이지를 수정할 수 없습니다.");
+    }
+
+    // 아이디 찾기 api
+    @GetMapping("/findId")
+    public ResponseEntity<String> findId(@RequestBody GetFindUserIdReq getFindUserIdReq) {
+        String userId = userService.matchUserId(getFindUserIdReq);
+        if (userId != null)
+            return ResponseEntity.status(HttpStatus.OK).body(getFindUserIdReq.getUserName() +
+                    "사용자의 아이디는 [" + userId + "] 입니다.");
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자입니다.");
+    }
+
+    // 비밀번호 찾기 api
+    @GetMapping("/findPwd")
+    public ResponseEntity<String> findPwd(@RequestBody GetFindUserPwdReq getFindUserPwdReq) {
+        String userPwd = userService.matchUserPwd(getFindUserPwdReq);
+        if (userPwd != null)
+            return ResponseEntity.status(HttpStatus.OK).body(getFindUserPwdReq.getUserName() +
+                    "사용자의 비밀번호는 [" + userPwd + "] 입니다.");
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자입니다.");
+    }
+
+    //로그아웃 api
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request){
+        //세션 무효화
+        request.getSession().invalidate();
+
+        //클라이언트에게 로그아웃 성공 메시지와 HTTP 상태 코드 반환
+        return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);
     }
 }

@@ -1,10 +1,8 @@
 package Happy20.GrowingPetPlant.User.Service;
 
-import Happy20.GrowingPetPlant.User.DTO.PatchUpdateMyPageReq;
+import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Domain.User;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
-import Happy20.GrowingPetPlant.User.DTO.GetLoginReq;
-import Happy20.GrowingPetPlant.User.DTO.PostSignupReq;
 import Happy20.GrowingPetPlant.UserPlant.Port.UserPlantRepository;
 import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
 import lombok.AllArgsConstructor;
@@ -70,14 +68,14 @@ public class UserService {
 
     @Transactional
     public boolean validateUpdateMyPage(PatchUpdateMyPageReq patchUpdateMyPageReq) {
+
         User user = userRepository.findById(patchUpdateMyPageReq.getId());
-        System.out.println(user);
         if (user == null)
             return (false);
+
         UserPlant userPlant = userPlantRepository.findByUserNumber(user.getUserNumber());
         if (userPlant == null)
             return (false);
-        System.out.println(userPlant);
 
         if (checkUserNumberEquality(user.getUserNumber(), patchUpdateMyPageReq.getUserNumber())) {
             if (patchUpdateMyPageReq.getPassword() != null) {
@@ -99,5 +97,31 @@ public class UserService {
         }
         else
             return (false);
+    }
+
+    public String matchUserId(GetFindUserIdReq getFindUserIdReq) {
+
+        User user = userRepository.findByUserName(getFindUserIdReq.getUserName());
+
+        if (user == null)
+            return (null);
+
+        if (getFindUserIdReq.getPhoneNumber().equals(user.getPhoneNumber()))
+            return (user.getId());
+        else
+            return (null);
+    }
+
+    public String matchUserPwd(GetFindUserPwdReq getFindUserPwdReq) {
+
+        User user = userRepository.findById(getFindUserPwdReq.getId());
+
+        if (user == null)
+            return (null);
+
+        if (getFindUserPwdReq.getUserName().equals(user.getUserName()))
+            return (user.getPassword());
+        else
+            return (null);
     }
 }
