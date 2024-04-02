@@ -2,8 +2,10 @@ package Happy20.GrowingPetPlant.User.Controller;
 
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,5 +77,15 @@ public class UserController {
                     "사용자의 비밀번호는 [" + userPwd + "] 입니다.");
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자입니다.");
+    }
+
+    //로그아웃 api
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request){
+        //세션 무효화
+        request.getSession().invalidate();
+
+        //클라이언트에게 로그아웃 성공 메시지와 HTTP 상태 코드 반환
+        return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);
     }
 }
