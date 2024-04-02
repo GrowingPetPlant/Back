@@ -1,4 +1,4 @@
-package Happy20.GrowingPetPlant.user.domain;
+package Happy20.GrowingPetPlant.User.Domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -13,22 +13,25 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //db가 자동으로 생성(값을 직접 입력할 필요 X, pk이기 때문에)
-    private Long user_number;
+    @Column(name = "user_number")
+    private Long userNumber;
 
     private String id;
 
     private String password;
 
-    private String user_name;
+    @Column(name = "user_name")
+    private String userName;
 
-    private String phone_number;
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     @Builder
     //인수없는 생성자 자동으로 생성됨(NoArgsConstructor), 생성자
-    public User(String id, String password, String user_name, String phone_number) {
+    public User(String id, String password, String userName, String phoneNumber) {
         this.id = id;
         this.password = password;
-        this.user_name = user_name;
-        this.phone_number = phone_number;
+        this.userName = userName;
+        this.phoneNumber = phoneNumber;
     }
 }
