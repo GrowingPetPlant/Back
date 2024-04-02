@@ -124,4 +124,16 @@ public class UserService {
         else
             return (null);
     }
+
+    //회원 탈퇴
+    @Transactional
+    public void deleteUser(String id){
+        User user = userRepository.findById(id);
+
+        if(user != null){
+            userRepository.delete(user);
+        }else{
+            throw new IllegalArgumentException("해당 사용자를 찾을 수 없습니다.");
+        }
+    }
 }

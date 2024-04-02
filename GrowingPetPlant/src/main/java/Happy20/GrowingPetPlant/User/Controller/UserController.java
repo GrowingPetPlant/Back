@@ -88,4 +88,11 @@ public class UserController {
         //클라이언트에게 로그아웃 성공 메시지와 HTTP 상태 코드 반환
         return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);
     }
+
+    //탈퇴하기
+    @DeleteMapping("/delete/{id}")
+    public String deleteUser(@PathVariable String id){
+        userService.deleteUser(id);
+        return id+ " 사용자 탈퇴가 완료되었습니다.";
+    }
 }
