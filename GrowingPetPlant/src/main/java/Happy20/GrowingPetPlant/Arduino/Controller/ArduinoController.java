@@ -28,26 +28,38 @@ public class ArduinoController {
     }
 
     // 조명 on api
-    @PostMapping("/lighton")
+    @PostMapping("/lightOn")
     public String LightOn() {
-        return "Light On";
+        if (arduinoService.lightingOnPlant())
+            return "Lighting On Plant";
+        else
+            return "Error";
     }
 
     // 조명 off api
-    @PostMapping("/lightoff")
+    @PostMapping("/lightOff")
     public String LightOff() {
-        return "Light Off";
+        if (arduinoService.lightingOffPlant())
+            return "Lighting Off Plant";
+        else
+            return "Error";
     }
 
     // 팬 on api
-    @PostMapping("/fanon")
+    @PostMapping("/fanOn")
     public String FanOn() {
-        return "Fan On";
+        if (arduinoService.fanOnPlant())
+            return "Fan On Plant";
+        else
+            return "Error";
     }
 
     // 팬 off api
-    @PostMapping("/fanoff")
+    @PostMapping("/fanOff")
     public String FanOff() {
-        return "Fan Off";
+        if (arduinoService.fanOffPlant())
+            return "Fan Off Plant";
+        else
+            return "Error";
     }
 }

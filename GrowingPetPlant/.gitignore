@@ -37,5 +37,4 @@ out/
 .vscode/
 
 ### Properties ###
-.properties
-!application.properties
+application-mysql.properties
