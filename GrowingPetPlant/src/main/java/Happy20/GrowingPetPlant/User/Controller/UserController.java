@@ -5,7 +5,6 @@ import Happy20.GrowingPetPlant.User.Service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,9 +39,9 @@ public class UserController {
     }
 
     // 로그인 api
-    @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestBody GetLoginReq getLoginReq) {
-        if (userService.validationLogin(getLoginReq)) {
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody PutLoginReq putLoginReq) {
+        if (userService.validationLogin(putLoginReq)) {
             return ResponseEntity.status(HttpStatus.OK).body("로그인에 성공했습니다.");
         } else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인에 실패했습니다.");

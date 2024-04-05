@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class GetLoginReq {
+public class PutLoginReq {
     private String id;
 
     private String password;
 
     @Builder
-    public GetLoginReq(String id, String password) {
+    public PutLoginReq(String id, String password) {
         this.id = id;
         this.password = password;
     }
