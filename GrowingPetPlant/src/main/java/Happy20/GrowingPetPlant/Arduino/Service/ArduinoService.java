@@ -30,7 +30,7 @@ public class ArduinoService {
     private static final String TOPIC_FAN_OFF = "fan_off";
 
     // 물 주기 메시지
-    private static final String WATERING_ON = "0";
+    private static final String WATERING_ON = "watering_start";
     // 조명 켜기 메시지
     private static final String LIGHT_ON = "1";
     // 조명 끄기 메시지
