@@ -40,7 +40,7 @@ public class UserController {
 
     // 로그인 api
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody PutLoginReq putLoginReq) {
+    public ResponseEntity<String> login(@RequestBody PostLoginReq putLoginReq) {
         if (userService.validationLogin(putLoginReq)) {
             return ResponseEntity.status(HttpStatus.OK).body("로그인에 성공했습니다.");
         } else
@@ -57,23 +57,23 @@ public class UserController {
     }
 
     // 아이디 찾기 api
-    @GetMapping("/findId")
+    @PostMapping("/findId")
     public ResponseEntity<String> findId(@RequestBody GetFindUserIdReq getFindUserIdReq) {
         String userId = userService.matchUserId(getFindUserIdReq);
         if (userId != null)
             return ResponseEntity.status(HttpStatus.OK).body(getFindUserIdReq.getUserName() +
-                    "사용자의 아이디는 [" + userId + "] 입니다.");
+                    " 사용자의 아이디는\n[" + userId + "] 입니다.");
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자입니다.");
     }
 
     // 비밀번호 찾기 api
-    @GetMapping("/findPwd")
+    @PostMapping("/findPwd")
     public ResponseEntity<String> findPwd(@RequestBody GetFindUserPwdReq getFindUserPwdReq) {
         String userPwd = userService.matchUserPwd(getFindUserPwdReq);
         if (userPwd != null)
             return ResponseEntity.status(HttpStatus.OK).body(getFindUserPwdReq.getUserName() +
-                    "사용자의 비밀번호는 [" + userPwd + "] 입니다.");
+                    "사용자의 비밀번호는\n [" + userPwd + "] 입니다.");
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자입니다.");
     }

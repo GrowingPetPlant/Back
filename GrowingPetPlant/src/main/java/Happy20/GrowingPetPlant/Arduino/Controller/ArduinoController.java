@@ -1,5 +1,6 @@
 package Happy20.GrowingPetPlant.Arduino.Controller;
 
+import Happy20.GrowingPetPlant.Arduino.DTO.PostWateringReq;
 import Happy20.GrowingPetPlant.Arduino.Service.ArduinoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,8 @@ public class ArduinoController {
 
     // 물 주기 api
     @PostMapping("/watering")
-    public String Watering() {
-        if (arduinoService.wateringPlant())
+    public String Watering(@RequestBody PostWateringReq postWateringReq) {
+        if (arduinoService.wateringPlant(postWateringReq))
             return "Watering Plant";
         else
             return "Error";

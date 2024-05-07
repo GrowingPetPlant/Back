@@ -1,5 +1,8 @@
 package Happy20.GrowingPetPlant.Arduino.Service;
 
+import Happy20.GrowingPetPlant.Arduino.DTO.PostWateringReq;
+import Happy20.GrowingPetPlant.Status.Status;
+import Happy20.GrowingPetPlant.Status.StatusRepository;
 import lombok.AllArgsConstructor;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -40,8 +43,10 @@ public class ArduinoService {
     // 팬 끄기 메시지
     private static final String FAN_OFF = "4";
 
+    private final StatusRepository statusRepository;
+
     @Transactional
-    public boolean wateringPlant() {
+    public boolean wateringPlant(PostWateringReq postWateringReq) {
 
         try(MqttClient client = new MqttClient(BROKER, CLIENT_ID)) {     // MQTT 클라이언트 생성, try-with-resource : 자동 해제 위해
 
@@ -61,6 +66,9 @@ public class ArduinoService {
 
             // 연결 해제
             client.disconnect();
+
+            Status status = statusRepository.findByPlantNumber(postWateringReq.getPlantNumber());
+            status.setWateringDate(postWateringReq.getWateringDate());
 
             return (true);
         }
