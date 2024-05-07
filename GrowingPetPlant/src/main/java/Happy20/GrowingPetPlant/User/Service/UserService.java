@@ -50,7 +50,7 @@ public class UserService {
     }
 
     @Transactional
-    public boolean validationLogin(PutLoginReq putLoginReq){
+    public boolean validationLogin(PostLoginReq putLoginReq){
         User user = userRepository.findById(putLoginReq.getId());
         if(user != null)
             return (user.getPassword().equals(putLoginReq.getPassword()));

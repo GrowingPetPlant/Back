@@ -4,21 +4,29 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@Component
 public class Subscriber {
     private static final Logger log = LoggerFactory.getLogger(Subscriber.class);
     private static Subscriber instance;
     private MqttClient client;
     private MqttConnectOptions connOpts;
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/GPP?serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "6797";
+    @Value("${spring.datasource.url")
+    private String DB_URL;
+
+    @Value("${spring.datasource.username}")
+    private String DB_USER;
+
+    @Value("${spring.datasource.password}")
+    private String DB_PASSWORD;
 
     // Private 생성자로 외부에서 인스턴스 생성을 막음
     private Subscriber() {}

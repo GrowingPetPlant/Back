@@ -1,7 +1,5 @@
 package Happy20.GrowingPetPlant.Status;
 
-import Happy20.GrowingPetPlant.Status.Status;
-import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
