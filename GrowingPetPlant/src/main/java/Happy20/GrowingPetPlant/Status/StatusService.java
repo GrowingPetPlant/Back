@@ -14,4 +14,16 @@ public class StatusService {
         Status status = statusRepository.findByPlantNumber(plantNumber); // 아이디로 사용자 조회
         return status.getTemperature();
     }
+
+    @Transactional
+    public Long getPlantMoisture(Long plantNumber) {
+        Status status = statusRepository.findByPlantNumber(plantNumber); // 아이디로 사용자 조회
+        return status.getMoisture();
+    }
+
+    @Transactional
+    public Long getPlantHumidity(Long plantNumber) {
+        Status status = statusRepository.findByPlantNumber(plantNumber); // 아이디로 사용자 조회
+        return status.getHumidity();
+    }
 }

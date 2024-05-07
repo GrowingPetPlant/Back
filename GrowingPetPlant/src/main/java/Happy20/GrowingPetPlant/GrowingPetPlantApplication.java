@@ -2,6 +2,7 @@ package Happy20.GrowingPetPlant;
 
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import Happy20.GrowingPetPlant.Subscribe.Subscriber;
 
@@ -26,6 +27,8 @@ public class GrowingPetPlantApplication {
 	private static String soilPayload;
 
 	public static void main(String[] args) {
+		SpringApplication.run(GrowingPetPlantApplication.class, args);
+
 		// Subscriber 인스턴스를 가져옴
 		Subscriber subscriber = Subscriber.getInstance();
 
@@ -61,7 +64,6 @@ public class GrowingPetPlantApplication {
 					soilPayload = null;
 				}
 			}
-
 
 			@Override
 			public void deliveryComplete(org.eclipse.paho.client.mqttv3.IMqttDeliveryToken iMqttDeliveryToken) {
