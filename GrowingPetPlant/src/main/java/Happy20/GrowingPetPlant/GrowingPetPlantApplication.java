@@ -5,6 +5,19 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import Happy20.GrowingPetPlant.Subscribe.Subscriber;
 
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import Happy20.GrowingPetPlant.Subscribe.Subscriber;
+import org.springframework.boot.SpringApplication;
+
+@SpringBootApplication
+public class GrowingPetPlantApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(GrowingPetPlantApplication.class, args);
+	}
+}
+
+/*
 @SpringBootApplication
 public class GrowingPetPlantApplication {
 
@@ -65,3 +78,4 @@ public class GrowingPetPlantApplication {
 		subscriber.subscribe("TOPIC_SOIL", 0);
 	}
 }
+*/
