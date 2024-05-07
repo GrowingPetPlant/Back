@@ -32,4 +32,10 @@ public class StatusController {
     public Long GetHumidity(@RequestParam("plantNumber") Long plantNumber) {
         return statusService.getPlantHumidity(plantNumber);
     }
+
+    // 식물 토양 습도 확인 api
+    @GetMapping("/name")
+    public String GetName(@RequestParam("plantNumber") Long plantNumber) {
+        return statusService.getPlantName(plantNumber);
+    }
 }
