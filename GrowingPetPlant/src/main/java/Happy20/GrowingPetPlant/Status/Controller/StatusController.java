@@ -1,5 +1,6 @@
-package Happy20.GrowingPetPlant.Status;
+package Happy20.GrowingPetPlant.Status.Controller;
 
+import Happy20.GrowingPetPlant.Status.Service.StatusService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

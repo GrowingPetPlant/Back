@@ -5,9 +5,15 @@ import Happy20.GrowingPetPlant.User.Domain.User;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import Happy20.GrowingPetPlant.UserPlant.Port.UserPlantRepository;
 import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service
@@ -26,7 +32,7 @@ public class UserService {
                 .userName(postSignupReq.getUserName())
                 .phoneNumber(postSignupReq.getPhoneNumber())
                 .build();
-        System.out.println(newUser.getId() + "\n" + newUser.getPassword() + "\n" + newUser.getUserName() + "\n" + newUser.getPhoneNumber());
+//        System.out.println(newUser.getId() + "\n" + newUser.getPassword() + "\n" + newUser.getUserName() + "\n" + newUser.getPhoneNumber());
         if (userRepository.existsById(newUser.getId()))
             return (false);
 
