@@ -1,4 +1,4 @@
-package Happy20.GrowingPetPlant.Status;
+package Happy20.GrowingPetPlant.Status.Domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;

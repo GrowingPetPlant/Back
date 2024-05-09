@@ -3,10 +3,15 @@ package Happy20.GrowingPetPlant.User.Controller;
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 @RestController
 @RequestMapping("user")
@@ -21,12 +26,11 @@ public class UserController {
 
     // 회원가입 api
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody PostSignupReq postSignupReq) {
-
+    public String signup(@Valid @RequestBody PostSignupReq postSignupReq) {
         if (userService.createUser(postSignupReq))
-            return ResponseEntity.status(HttpStatus.CREATED).body("회원가입에 성공했습니다.");
+            return "회원가입에 성공했습니다.";
         else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입에 실패했습니다.");
+            return "회원가입에 실패했습니다.";
     }
 
     // 회원가입 - 아이디 중복 검사 api
