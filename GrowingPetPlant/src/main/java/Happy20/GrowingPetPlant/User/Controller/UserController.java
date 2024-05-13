@@ -34,7 +34,7 @@ public class UserController {
     }
 
     // 회원가입 - 아이디 중복 검사 api
-    @GetMapping("/idCheck")
+    @PostMapping("/idCheck")
     public ResponseEntity<String> idCheck(@RequestParam("id") String id) {
         if (userService.validateId(id))
             return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 아이디입니다.");
