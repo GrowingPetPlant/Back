@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("user")
 public class UserController {
@@ -30,8 +32,9 @@ public class UserController {
     }
 
     // 회원가입 - 아이디 중복 검사 api
-    @GetMapping("/idCheck")
-    public ResponseEntity<String> idCheck(@RequestParam("id") String id) {
+    @PostMapping("/idCheck")
+    public ResponseEntity<String> idCheck(@RequestParam Map<String, String> requestBody) {
+        String id = requestBody.get("id");
         if (userService.validateId(id))
             return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 아이디입니다.");
         else
