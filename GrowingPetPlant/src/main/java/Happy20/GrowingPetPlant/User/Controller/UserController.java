@@ -79,7 +79,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자입니다.");
     }
 
-    //로그아웃 api
+    // 로그아웃 api
     @GetMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request){
         //세션 무효화
@@ -89,7 +89,7 @@ public class UserController {
         return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);
     }
 
-    //탈퇴하기
+    // 회원 탈퇴 api
     @DeleteMapping("/delete/{id}")
     public String deleteUser(@PathVariable String id){
         userService.deleteUser(id);
