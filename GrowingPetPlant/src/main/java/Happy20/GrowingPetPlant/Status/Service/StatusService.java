@@ -13,6 +13,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -20,24 +21,27 @@ public class StatusService {
     private final StatusRepository statusRepository;
     private final UserPlantRepository userPlantRepository;
 
-    // 식물 온도 표시
+    // 식물 최근 온도 표시
     @Transactional
-    public Long getPlantTemp(Long plantNumber) {
-        Status status = statusRepository.findByPlantNumber(plantNumber);
+    public Long recentPlantTemp(Long plantNumber) {
+        Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+
         return status.getTemperature();
     }
 
-    // 식물 습도 표시
+    // 식물 최근 습도 표시
     @Transactional
-    public Long getPlantMoisture(Long plantNumber) {
-        Status status = statusRepository.findByPlantNumber(plantNumber);
+    public Long recentPlantMoisture(Long plantNumber) {
+        Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+
         return status.getMoisture();
     }
 
-    // 식물 토양 습도 표시
+    // 식물 최근 토양 습도 표시
     @Transactional
-    public Long getPlantHumidity(Long plantNumber) {
-        Status status = statusRepository.findByPlantNumber(plantNumber);
+    public Long recentPlantHumidity(Long plantNumber) {
+        Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+
         return status.getHumidity();
     }
 
