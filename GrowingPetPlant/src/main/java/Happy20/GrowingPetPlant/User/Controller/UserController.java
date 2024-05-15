@@ -2,16 +2,13 @@ package Happy20.GrowingPetPlant.User.Controller;
 
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Service.UserService;
+import Happy20.GrowingPetPlant.User.Domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
-import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
 
 import java.util.Map;
 
@@ -48,14 +45,14 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody PostLoginReq putLoginReq) {
         if (userService.validationLogin(putLoginReq)) {
-            return ResponseEntity.status(HttpStatus.OK).body("로그인에 성공했습니다.");
+            return ResponseEntity.status(HttpStatus.OK).body(putLoginReq.getId());
         } else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인에 실패했습니다.");
     }
 
     // 마이페이지 수정 api
     @PatchMapping("/mypage")
-    public ResponseEntity<String> updateMyPage(@RequestBody PatchUpdateMyPageReq patchUpdateMyPageReq) {
+    public ResponseEntity<String> updateMyPage(@Valid @RequestBody PatchUpdateMyPageReq patchUpdateMyPageReq) {
         if (userService.validateUpdateMyPage(patchUpdateMyPageReq)) {
             return ResponseEntity.status(HttpStatus.OK).body("마이페이지가 수정됐습니다.");
         } else
@@ -84,7 +81,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자입니다.");
     }
 
-    //로그아웃 api
+    // 로그아웃 api
     @GetMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request){
         //세션 무효화
@@ -94,7 +91,7 @@ public class UserController {
         return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);
     }
 
-    //탈퇴하기
+    // 회원 탈퇴 api
     @DeleteMapping("/delete/{id}")
     public String deleteUser(@PathVariable String id){
         userService.deleteUser(id);

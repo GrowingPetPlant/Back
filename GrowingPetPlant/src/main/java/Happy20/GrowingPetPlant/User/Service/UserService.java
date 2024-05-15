@@ -5,15 +5,9 @@ import Happy20.GrowingPetPlant.User.Domain.User;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import Happy20.GrowingPetPlant.UserPlant.Port.UserPlantRepository;
 import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Service
@@ -23,6 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserPlantRepository userPlantRepository;
 
+    // 회원 생성
     @Transactional
     public boolean createUser(PostSignupReq postSignupReq) {
 
@@ -48,6 +43,7 @@ public class UserService {
         return (true);
     }
 
+    // 유효한 아이디인지 확인
     @Transactional
     public boolean validateId(String id) {
         if (userRepository.existsById(id))
@@ -55,6 +51,7 @@ public class UserService {
         return (true);
     }
 
+    // 로그인 확인
     @Transactional
     public boolean validationLogin(PostLoginReq putLoginReq){
         User user = userRepository.findById(putLoginReq.getId());
@@ -64,6 +61,7 @@ public class UserService {
             return (false);
     }
 
+    // 유저 번호 동일한지 확인
     @Transactional
     public boolean checkUserNumberEquality(Long prevUserNumber, Long nowUserNumber) {
         if (prevUserNumber.equals(nowUserNumber))
@@ -72,6 +70,7 @@ public class UserService {
             return (false);
     }
 
+    // 마이페이지 업데이트
     @Transactional
     public boolean validateUpdateMyPage(PatchUpdateMyPageReq patchUpdateMyPageReq) {
 
@@ -83,6 +82,7 @@ public class UserService {
         if (userPlant == null)
             return (false);
 
+        // 아이디는 변경 불가 -> 아이디 바꾸지 않은 경우
         if (checkUserNumberEquality(user.getUserNumber(), patchUpdateMyPageReq.getUserNumber())) {
             if (patchUpdateMyPageReq.getPassword() != null) {
                 user.setPassword(patchUpdateMyPageReq.getPassword());
@@ -105,6 +105,7 @@ public class UserService {
             return (false);
     }
 
+    // 유저 아이디 찾기
     public String matchUserId(GetFindUserIdReq getFindUserIdReq) {
 
         User user = userRepository.findByUserName(getFindUserIdReq.getUserName());
@@ -118,6 +119,7 @@ public class UserService {
             return (null);
     }
 
+    // 유저 비밀번호 찾기
     public String matchUserPwd(GetFindUserPwdReq getFindUserPwdReq) {
 
         User user = userRepository.findById(getFindUserPwdReq.getId());
@@ -131,7 +133,7 @@ public class UserService {
             return (null);
     }
 
-    //회원 탈퇴
+    // 회원 탈퇴
     @Transactional
     public void deleteUser(String id){
         User user = userRepository.findById(id);

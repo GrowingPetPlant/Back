@@ -1,9 +1,7 @@
 package Happy20.GrowingPetPlant.Exception;
 
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.core.Constants;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -5,6 +5,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import Happy20.GrowingPetPlant.Subscribe.Subscriber;
+import org.springframework.stereotype.Component;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,6 +21,7 @@ public class GrowingPetPlantApplication {
 
 /*
 @SpringBootApplication
+@Component
 public class GrowingPetPlantApplication {
 
 	private static String tempPayload;
