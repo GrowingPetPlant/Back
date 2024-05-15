@@ -50,7 +50,7 @@ public class UserController {
 
     // 마이페이지 수정 api
     @PatchMapping("/mypage")
-    public ResponseEntity<String> updateMyPage(@RequestBody PatchUpdateMyPageReq patchUpdateMyPageReq) {
+    public ResponseEntity<String> updateMyPage(@Valid @RequestBody PatchUpdateMyPageReq patchUpdateMyPageReq) {
         if (userService.validateUpdateMyPage(patchUpdateMyPageReq)) {
             return ResponseEntity.status(HttpStatus.OK).body("마이페이지가 수정됐습니다.");
         } else
