@@ -1,6 +1,7 @@
 package Happy20.GrowingPetPlant.UserPlant.Domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,9 +17,11 @@ public class UserPlant {
     @Column(name = "plant_number")
     private Long plantNumber;
 
+    @NotBlank(message = "식물 이름을 입력해주세요.")
     @Column(name = "plant_name")
     private String plantName;
 
+    @NotBlank(message = "식물 종류를 선택해주세요.")
     @Column(name = "plant_type")
     private String plantType;
 

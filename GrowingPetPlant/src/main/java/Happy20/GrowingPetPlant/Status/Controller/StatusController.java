@@ -1,5 +1,6 @@
-package Happy20.GrowingPetPlant.Status;
+package Happy20.GrowingPetPlant.Status.Controller;
 
+import Happy20.GrowingPetPlant.Status.Service.StatusService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,5 +32,11 @@ public class StatusController {
     @GetMapping("/humi")
     public Long GetHumidity(@RequestParam("plantNumber") Long plantNumber) {
         return statusService.getPlantHumidity(plantNumber);
+    }
+
+    // 식물 토양 습도 확인 api
+    @GetMapping("/name")
+    public String GetName(@RequestParam("plantNumber") Long plantNumber) {
+        return statusService.getPlantName(plantNumber);
     }
 }

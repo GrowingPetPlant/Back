@@ -1,8 +1,8 @@
 package Happy20.GrowingPetPlant.Arduino.Service;
 
 import Happy20.GrowingPetPlant.Arduino.DTO.PostWateringReq;
-import Happy20.GrowingPetPlant.Status.Status;
-import Happy20.GrowingPetPlant.Status.StatusRepository;
+import Happy20.GrowingPetPlant.Status.Domain.Status;
+import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import lombok.AllArgsConstructor;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;

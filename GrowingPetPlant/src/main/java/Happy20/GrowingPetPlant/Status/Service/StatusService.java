@@ -1,5 +1,9 @@
-package Happy20.GrowingPetPlant.Status;
+package Happy20.GrowingPetPlant.Status.Service;
 
+import Happy20.GrowingPetPlant.Status.Domain.Status;
+import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
+import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
+import Happy20.GrowingPetPlant.UserPlant.Port.UserPlantRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class StatusService {
     private final StatusRepository statusRepository;
+    private final UserPlantRepository userPlantRepository;
 
     @Transactional
     public Long getPlantTemp(Long plantNumber) {
@@ -25,5 +30,11 @@ public class StatusService {
     public Long getPlantHumidity(Long plantNumber) {
         Status status = statusRepository.findByPlantNumber(plantNumber); // 아이디로 사용자 조회
         return status.getHumidity();
+    }
+
+    @Transactional
+    public String getPlantName(Long plantNumber) {
+        UserPlant userPlant = userPlantRepository.findByPlantNumber(plantNumber); // 아이디로 사용자 조회
+        return userPlant.getPlantName();
     }
 }
