@@ -2,16 +2,13 @@ package Happy20.GrowingPetPlant.User.Controller;
 
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Service.UserService;
+import Happy20.GrowingPetPlant.User.Domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
-import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
 
 @RestController
 @RequestMapping("user")
@@ -46,7 +43,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody PostLoginReq putLoginReq) {
         if (userService.validationLogin(putLoginReq)) {
-            return ResponseEntity.status(HttpStatus.OK).body("로그인에 성공했습니다.");
+            return ResponseEntity.status(HttpStatus.OK).body(putLoginReq.getId());
         } else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인에 실패했습니다.");
     }
