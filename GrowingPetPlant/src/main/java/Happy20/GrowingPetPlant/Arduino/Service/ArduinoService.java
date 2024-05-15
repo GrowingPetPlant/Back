@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -44,6 +48,17 @@ public class ArduinoService {
     private static final String FAN_OFF = "4";
 
     private final StatusRepository statusRepository;
+
+
+    // 식물 최근 물 준 날짜 표시
+    @Transactional
+    public LocalDate recentPlantWatering(Long plantNumber) {
+        Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+
+        LocalDate localDate = status.getWateringDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        return localDate;
+    }
 
     @Transactional
     public boolean wateringPlant(PostWateringReq postWateringReq) {
