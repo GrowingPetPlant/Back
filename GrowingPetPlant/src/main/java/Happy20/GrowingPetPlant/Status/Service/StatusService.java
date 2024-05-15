@@ -8,33 +8,60 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class StatusService {
     private final StatusRepository statusRepository;
     private final UserPlantRepository userPlantRepository;
 
+    // 식물 온도 표시
     @Transactional
     public Long getPlantTemp(Long plantNumber) {
-        Status status = statusRepository.findByPlantNumber(plantNumber); // 아이디로 사용자 조회
+        Status status = statusRepository.findByPlantNumber(plantNumber);
         return status.getTemperature();
     }
 
+    // 식물 습도 표시
     @Transactional
     public Long getPlantMoisture(Long plantNumber) {
-        Status status = statusRepository.findByPlantNumber(plantNumber); // 아이디로 사용자 조회
+        Status status = statusRepository.findByPlantNumber(plantNumber);
         return status.getMoisture();
     }
 
+    // 식물 토양 습도 표시
     @Transactional
     public Long getPlantHumidity(Long plantNumber) {
-        Status status = statusRepository.findByPlantNumber(plantNumber); // 아이디로 사용자 조회
+        Status status = statusRepository.findByPlantNumber(plantNumber);
         return status.getHumidity();
     }
 
+    // 식물 이름 표시
     @Transactional
     public String getPlantName(Long plantNumber) {
-        UserPlant userPlant = userPlantRepository.findByPlantNumber(plantNumber); // 아이디로 사용자 조회
+        UserPlant userPlant = userPlantRepository.findByPlantNumber(plantNumber);
         return userPlant.getPlantName();
+    }
+
+    // 식물 물 준 날짜 가져오기
+    @Transactional
+    public List<LocalDate> getWateringDate(Long plantNumber) {
+        List<Date> DateList = statusRepository.findWateringByPlantNumber(plantNumber);
+
+        List<LocalDate> localDateList = new ArrayList<>();
+
+        // Date를 LocalDate로 변환
+        // 변환 안할 경우 제대로 출력 X
+        for (Date date : DateList) {
+            LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            localDateList.add(localDate);
+        }
+
+        return localDateList;
     }
 }
