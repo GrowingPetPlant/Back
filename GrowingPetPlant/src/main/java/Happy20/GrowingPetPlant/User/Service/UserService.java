@@ -43,6 +43,13 @@ public class UserService {
         return (true);
     }
 
+    // 유효한 유저인지 확인
+    @Transactional
+    public User validateUser(String id) {
+
+        return userRepository.findById(id);
+    }
+
     // 유효한 아이디인지 확인
     @Transactional
     public boolean validateId(String id) {
