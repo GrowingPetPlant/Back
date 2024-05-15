@@ -57,6 +57,17 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마이페이지를 수정할 수 없습니다.");
     }
 
+    // 아이디 -> 유저 찾기 api
+    @GetMapping("/findUser")
+    public ResponseEntity<User> findUser(@RequestParam("id") String id) {
+        User user = userService.validateUser(id);
+
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        else
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
     // 아이디 찾기 api
     @PostMapping("/findId")
     public ResponseEntity<String> findId(@RequestBody GetFindUserIdReq getFindUserIdReq) {
