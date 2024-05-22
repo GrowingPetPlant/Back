@@ -2,6 +2,9 @@ package Happy20.GrowingPetPlant.Status.Service;
 
 import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
+import Happy20.GrowingPetPlant.Status.DTO.PostStatusReq;
+
+import Happy20.GrowingPetPlant.User.Domain.User;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import Happy20.GrowingPetPlant.UserPlant.Port.UserPlantRepository;
 import lombok.AllArgsConstructor;
@@ -13,13 +16,13 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class StatusService {
     private final StatusRepository statusRepository;
     private final UserPlantRepository userPlantRepository;
+
 
     // 식물 최근 온도 표시
     @Transactional

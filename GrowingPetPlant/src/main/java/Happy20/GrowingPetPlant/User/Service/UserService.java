@@ -45,9 +45,9 @@ public class UserService {
 
     // 유효한 유저인지 확인
     @Transactional
-    public User validateUser(String id) {
+    public User validateUser(Long userNumber) {
 
-        return userRepository.findById(id);
+        return userRepository.findByUserNumber(userNumber);
     }
 
     // 유효한 아이디인지 확인
@@ -60,12 +60,12 @@ public class UserService {
 
     // 로그인 확인
     @Transactional
-    public boolean validationLogin(PostLoginReq putLoginReq){
-        User user = userRepository.findById(putLoginReq.getId());
-        if(user != null)
-            return (user.getPassword().equals(putLoginReq.getPassword()));
+    public Long validationLogin(PostLoginReq postLoginReq){
+        User user = userRepository.findById(postLoginReq.getId());
+        if(user != null && user.getPassword().equals(postLoginReq.getPassword()))
+            return (user.getUserNumber());
         else
-            return (false);
+            return (null);
     }
 
     // 유저 번호 동일한지 확인
