@@ -1,10 +1,8 @@
 package Happy20.GrowingPetPlant.Arduino.Service;
 
 import Happy20.GrowingPetPlant.Arduino.DTO.PostWateringReq;
-import Happy20.GrowingPetPlant.Status.DTO.PostStatusReq;
 import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
-import Happy20.GrowingPetPlant.User.DTO.PostSignupReq;
 import lombok.AllArgsConstructor;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -15,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 
 @Slf4j
 @Service
@@ -51,35 +47,12 @@ public class ArduinoService {
 
     private final StatusRepository statusRepository;
 
-
-    @Transactional
-    public boolean createStatus(PostWateringReq postWateringReq) {
-        Long plantNumber = postWateringReq.getPlantNumber();
-        Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
-
-        Status newStatus = Status.builder()
-                .plantNumber(postWateringReq.getPlantNumber())
-                .moisture(status.getMoisture())
-                .temperature(status.getTemperature())
-                .humidity(status.getHumidity())
-                .light(status.getLight())
-                .growingDate(status.getGrowingDate())
-                .wateringDate(postWateringReq.getWateringDate())
-                .build();
-
-        Status saveStatus = statusRepository.save(newStatus);
-
-        return (true);
-    }
-
     // 식물 최근 물 준 날짜 표시
     @Transactional
     public LocalDate recentPlantWatering(Long plantNumber) {
         Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
 
-        LocalDate localDate = status.getWateringDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-        return localDate;
+        return status.getWateringDate();
     }
 
     @Transactional

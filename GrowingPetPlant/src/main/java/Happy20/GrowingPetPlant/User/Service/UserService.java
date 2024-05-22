@@ -1,5 +1,7 @@
 package Happy20.GrowingPetPlant.User.Service;
 
+import Happy20.GrowingPetPlant.Status.Domain.Status;
+import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Domain.User;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
@@ -16,6 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserPlantRepository userPlantRepository;
+    private final StatusRepository statusRepository;
 
     // 회원 생성
     @Transactional
@@ -27,7 +30,7 @@ public class UserService {
                 .userName(postSignupReq.getUserName())
                 .phoneNumber(postSignupReq.getPhoneNumber())
                 .build();
-//        System.out.println(newUser.getId() + "\n" + newUser.getPassword() + "\n" + newUser.getUserName() + "\n" + newUser.getPhoneNumber());
+
         if (userRepository.existsById(newUser.getId()))
             return (false);
 
@@ -40,6 +43,19 @@ public class UserService {
                 .build();
 
         userPlantRepository.save(newUserPlant);
+
+        Status newStatus = Status.builder()
+                .moisture(null)
+                .temperature(null)
+                .humidity(null)
+                .light(Boolean.FALSE)
+                .plantNumber(newUserPlant.getPlantNumber())
+                .wateringDate(null)
+                .fan(Boolean.FALSE)
+                .build();
+
+        statusRepository.save(newStatus);
+
         return (true);
     }
 
