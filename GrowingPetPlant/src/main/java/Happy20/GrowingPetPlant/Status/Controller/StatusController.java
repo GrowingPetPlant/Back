@@ -1,14 +1,11 @@
 package Happy20.GrowingPetPlant.Status.Controller;
 
-import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.StatusService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 // 온도, 습도, 토양 습도
@@ -22,7 +19,11 @@ public class StatusController {
     }
 
     // 식물 생성 api
-    // createStatus
+    @PostMapping("/create")
+    public ResponseEntity<String> createStatus() {
+        statusService.createStatus();
+        return ResponseEntity.status(HttpStatus.OK).body("상태를 생성했습니다.");
+    }
 
     // 식물 최근 온도 확인 api
     @GetMapping("/temp")

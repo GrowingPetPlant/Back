@@ -2,16 +2,11 @@ package Happy20.GrowingPetPlant.Arduino.Controller;
 
 import Happy20.GrowingPetPlant.Arduino.DTO.PostWateringReq;
 import Happy20.GrowingPetPlant.Arduino.Service.ArduinoService;
-import Happy20.GrowingPetPlant.Status.Service.StatusService;
-import Happy20.GrowingPetPlant.Status.DTO.PostStatusReq;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 
 @Slf4j
 @RestController
@@ -27,7 +22,7 @@ public class ArduinoController {
     // 물 주기 버튼 클릭 api
     @PostMapping("/putwater")
     public String putWatering(@RequestBody PostWateringReq postWateringReq) {
-        LocalDate postWateringDate = postWateringReq.getWateringDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate postWateringDate = postWateringReq.getWateringDate();
         LocalDate recentWateringDate = arduinoService.recentPlantWatering(postWateringReq.getPlantNumber());
 
         if (recentWateringDate.equals(postWateringDate))
@@ -40,7 +35,6 @@ public class ArduinoController {
     @PostMapping("/watering")
     public String Watering(@RequestBody PostWateringReq postWateringReq) {
         if (arduinoService.wateringPlant(postWateringReq)) {
-            arduinoService.createStatus(postWateringReq);
             return "Watering Plant";
         }
         else
