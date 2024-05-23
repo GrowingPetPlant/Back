@@ -5,7 +5,7 @@ import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Domain.User;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
-import Happy20.GrowingPetPlant.UserPlant.Port.UserPlantRepository;
+import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -160,8 +160,10 @@ public class UserService {
     @Transactional
     public void deleteUser(String id){
         User user = userRepository.findById(id);
+        UserPlant userPlant = userPlantRepository.findByPlantNumber(user.getUserNumber());
 
         if(user != null){
+            userPlantRepository.delete(userPlant);
             userRepository.delete(user);
         }else{
             throw new IllegalArgumentException("해당 사용자를 찾을 수 없습니다.");
