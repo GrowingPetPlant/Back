@@ -1,4 +1,4 @@
-package Happy20.GrowingPetPlant.UserPlant.Port;
+package Happy20.GrowingPetPlant.UserPlant.Service.Port;
 
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import org.springframework.data.jpa.repository.JpaRepository;

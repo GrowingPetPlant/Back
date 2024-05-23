@@ -3,7 +3,7 @@ package Happy20.GrowingPetPlant.Status.Service;
 import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
-import Happy20.GrowingPetPlant.UserPlant.Port.UserPlantRepository;
+import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
