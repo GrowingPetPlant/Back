@@ -34,6 +34,9 @@ public class UserService {
         if (userRepository.existsById(newUser.getId()))
             return (false);
 
+        if (userRepository.existsByUserName(newUser.getUserName()))
+            return (false);
+
         User saveUser = userRepository.save(newUser);
 
         UserPlant newUserPlant = UserPlant.builder()
