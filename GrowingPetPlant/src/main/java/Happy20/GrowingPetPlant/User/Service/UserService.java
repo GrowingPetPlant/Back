@@ -77,6 +77,14 @@ public class UserService {
         return (true);
     }
 
+    // 유효한 닉네임인지 확인
+    @Transactional
+    public boolean validateName(String name) {
+        if (userRepository.existsByUserName(name))
+            return (false);
+        return (true);
+    }
+
     // 로그인 확인
     @Transactional
     public Long validationLogin(PostLoginReq postLoginReq){
