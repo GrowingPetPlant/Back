@@ -39,6 +39,15 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용할 수 없는 아이디입니다.");
     }
 
+    // 회원가입 - 닉네임 중복 검사 api
+    @PostMapping("/nameCheck")
+    public ResponseEntity<String> nameCheck(@RequestParam("name") String name) {
+        if (userService.validateName(name))
+            return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 닉네임입니다.");
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 닉네임입니다.");
+    }
+
     // 로그인 api
     @PostMapping("/login")
     public ResponseEntity<Long> login(@RequestBody PostLoginReq putLoginReq) {
