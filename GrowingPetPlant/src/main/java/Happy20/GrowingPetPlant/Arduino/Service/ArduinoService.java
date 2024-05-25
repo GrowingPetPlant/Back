@@ -13,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 
 @Slf4j
 @Service
@@ -49,15 +47,12 @@ public class ArduinoService {
 
     private final StatusRepository statusRepository;
 
-
     // 식물 최근 물 준 날짜 표시
     @Transactional
     public LocalDate recentPlantWatering(Long plantNumber) {
         Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
 
-        LocalDate localDate = status.getWateringDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-        return localDate;
+        return status.getWateringDate();
     }
 
     @Transactional

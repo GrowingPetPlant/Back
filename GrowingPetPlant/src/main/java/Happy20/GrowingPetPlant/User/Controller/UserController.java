@@ -41,13 +41,23 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용할 수 없는 아이디입니다.");
     }
 
+    // 회원가입 - 닉네임 중복 검사 api
+    @PostMapping("/nameCheck")
+    public ResponseEntity<String> nameCheck(@RequestParam("name") String name) {
+        if (userService.validateName(name))
+            return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 닉네임입니다.");
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 닉네임입니다.");
+    }
+
     // 로그인 api
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody PostLoginReq putLoginReq) {
-        if (userService.validationLogin(putLoginReq)) {
-            return ResponseEntity.status(HttpStatus.OK).body(putLoginReq.getId());
+    public ResponseEntity<Long> login(@RequestBody PostLoginReq putLoginReq) {
+        Long loginUserNum = userService.validationLogin(putLoginReq);
+        if (loginUserNum != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(loginUserNum);
         } else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
 
     // 마이페이지 수정 api
@@ -59,10 +69,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마이페이지를 수정할 수 없습니다.");
     }
 
-    // 아이디 -> 유저 찾기 api
+    // 유저 번호 -> 유저 찾기 api
     @GetMapping("/findUser")
-    public ResponseEntity<User> findUser(@RequestParam("id") String id) {
-        User user = userService.validateUser(id);
+    public ResponseEntity<User> findUser(@RequestParam("userNumber") Long userNumber) {
+        User user = userService.validateUser(userNumber);
 
         if (user == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

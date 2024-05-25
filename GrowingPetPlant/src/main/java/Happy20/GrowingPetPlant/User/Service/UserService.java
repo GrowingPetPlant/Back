@@ -1,9 +1,11 @@
 package Happy20.GrowingPetPlant.User.Service;
 
+import Happy20.GrowingPetPlant.Status.Domain.Status;
+import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Domain.User;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
-import Happy20.GrowingPetPlant.UserPlant.Port.UserPlantRepository;
+import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserPlantRepository userPlantRepository;
+    private final StatusRepository statusRepository;
 
     // 회원 생성
     @Transactional
@@ -27,8 +30,11 @@ public class UserService {
                 .userName(postSignupReq.getUserName())
                 .phoneNumber(postSignupReq.getPhoneNumber())
                 .build();
-//        System.out.println(newUser.getId() + "\n" + newUser.getPassword() + "\n" + newUser.getUserName() + "\n" + newUser.getPhoneNumber());
+
         if (userRepository.existsById(newUser.getId()))
+            return (false);
+
+        if (userRepository.existsByUserName(newUser.getUserName()))
             return (false);
 
         User saveUser = userRepository.save(newUser);
@@ -40,14 +46,27 @@ public class UserService {
                 .build();
 
         userPlantRepository.save(newUserPlant);
+
+        Status newStatus = Status.builder()
+                .moisture(null)
+                .temperature(null)
+                .humidity(null)
+                .light(Boolean.FALSE)
+                .plantNumber(newUserPlant.getPlantNumber())
+                .wateringDate(null)
+                .fan(Boolean.FALSE)
+                .build();
+
+        statusRepository.save(newStatus);
+
         return (true);
     }
 
     // 유효한 유저인지 확인
     @Transactional
-    public User validateUser(String id) {
+    public User validateUser(Long userNumber) {
 
-        return userRepository.findById(id);
+        return userRepository.findByUserNumber(userNumber);
     }
 
     // 유효한 아이디인지 확인
@@ -58,14 +77,22 @@ public class UserService {
         return (true);
     }
 
+    // 유효한 닉네임인지 확인
+    @Transactional
+    public boolean validateName(String name) {
+        if (userRepository.existsByUserName(name))
+            return (false);
+        return (true);
+    }
+
     // 로그인 확인
     @Transactional
-    public boolean validationLogin(PostLoginReq putLoginReq){
-        User user = userRepository.findById(putLoginReq.getId());
-        if(user != null)
-            return (user.getPassword().equals(putLoginReq.getPassword()));
+    public Long validationLogin(PostLoginReq postLoginReq){
+        User user = userRepository.findById(postLoginReq.getId());
+        if(user != null && user.getPassword().equals(postLoginReq.getPassword()))
+            return (user.getUserNumber());
         else
-            return (false);
+            return (null);
     }
 
     // 유저 번호 동일한지 확인
@@ -144,8 +171,10 @@ public class UserService {
     @Transactional
     public void deleteUser(String id){
         User user = userRepository.findById(id);
+        UserPlant userPlant = userPlantRepository.findByPlantNumber(user.getUserNumber());
 
         if(user != null){
+            userPlantRepository.delete(userPlant);
             userRepository.delete(user);
         }else{
             throw new IllegalArgumentException("해당 사용자를 찾을 수 없습니다.");
