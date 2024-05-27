@@ -77,7 +77,7 @@ public class ArduinoService {
             // 연결 해제
             client.disconnect();
 
-            Status status = statusRepository.findByPlantNumber(postWateringReq.getPlantNumber());
+            Status status = statusRepository.findRecentStatusByPlantNumber(postWateringReq.getPlantNumber());
             status.setWateringDate(postWateringReq.getWateringDate());
 
             return (true);
