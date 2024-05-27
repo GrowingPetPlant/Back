@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -21,6 +22,7 @@ public interface StatusRepository extends JpaRepository<Status, Long> {
     @Query("SELECT s FROM Status s WHERE s.plantNumber = :plantNumber ORDER BY s.statusNumber DESC LIMIT 1")
     Status findRecentStatusByPlantNumber(@Param("plantNumber") Long plantNumber);
 
-    @Query("SELECT s FROM Status s ORDER BY s.createTime DESC")
-    Status findRecentStatus();
+    @Query("SELECT s FROM Status s WHERE s.createTime BETWEEN :start AND :end")
+    List<Status> findAllByStatusCreateTimeBetween(        @Param("start") LocalDateTime start,
+                                                          @Param("end") LocalDateTime end);
 }

@@ -18,10 +18,10 @@ public class StatusController {
         this.statusService = statusService;
     }
 
-    // 식물 생성 api
+    // 식물 상태 정각 생성 api
     @PostMapping("/create")
-    public ResponseEntity<String> createStatus() {
-        statusService.createStatus();
+    public ResponseEntity<String> createStatus(@RequestParam("plantNumber") Long plantNumber) {
+        statusService.createStatus(plantNumber);
         return ResponseEntity.status(HttpStatus.OK).body("상태를 생성했습니다.");
     }
 
