@@ -110,6 +110,9 @@ public class ArduinoService {
 
                 // 특정 주제에 메시지 발행
                 client.publish(TOPIC_LIGHT_ON, mqttMessage);
+
+                // 조명 켜기
+                recentStatus.setLight(true);
             }
             else {
                 // 메시지 생성 및 발행
@@ -118,6 +121,9 @@ public class ArduinoService {
 
                 // 특정 주제에 메시지 발행
                 client.publish(TOPIC_LIGHT_OFF, mqttMessage);
+
+                // 조명 끄기
+                recentStatus.setLight(false);
             }
 
             // 연결 해제
@@ -153,6 +159,9 @@ public class ArduinoService {
 
                 // 특정 주제에 메시지 발행
                 client.publish(TOPIC_FAN_ON, mqttMessage);
+
+                // 팬 켜기
+                recentStatus.setFan(true);
             }
             else {
                 // 메시지 생성 및 발행
@@ -161,6 +170,9 @@ public class ArduinoService {
 
                 // 특정 주제에 메시지 발행
                 client.publish(TOPIC_FAN_OFF, mqttMessage);
+
+                // 팬 끄기
+                recentStatus.setFan(false);
             }
 
             // 연결 해제
