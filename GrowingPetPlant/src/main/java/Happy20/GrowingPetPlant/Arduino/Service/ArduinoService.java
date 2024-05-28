@@ -24,26 +24,22 @@ public class ArduinoService {
     // MQTT 클라이언트 ID
     private static final String CLIENT_ID = "ksj";
     // 물 주기 TOPIC
-    private static final String TOPIC_WATERING = "watering_start";
+    private static final String TOPIC_WATERING = "TOPIC_WATERING";
     // 물 주기 TOPIC
-    private static final String TOPIC_LIGHT_ON = "lighting_on";
+    private static final String TOPIC_LIGHT = "TOPIC_LIGHT";
     // 물 주기 TOPIC
-    private static final String TOPIC_LIGHT_OFF = "lighting_off";
-    // 물 주기 TOPIC
-    private static final String TOPIC_FAN_ON = "fan_on";
-    // 물 주기 TOPIC
-    private static final String TOPIC_FAN_OFF = "fan_off";
+    private static final String TOPIC_FAN = "TOPIC_FAN";
 
     // 물 주기 메시지
-    private static final String WATERING_ON = "watering_start";
+    private static final String WATERING_ON = "1";
     // 조명 켜기 메시지
     private static final String LIGHT_ON = "1";
     // 조명 끄기 메시지
-    private static final String LIGHT_OFF = "2";
+    private static final String LIGHT_OFF = "0";
     // 팬 켜기 메시지
-    private static final String FAN_ON = "3";
+    private static final String FAN_ON = "1";
     // 팬 끄기 메시지
-    private static final String FAN_OFF = "4";
+    private static final String FAN_OFF = "0";
 
     private final StatusRepository statusRepository;
 
@@ -109,7 +105,7 @@ public class ArduinoService {
                 mqttMessage.setQos(0); // 신뢰성 전달
 
                 // 특정 주제에 메시지 발행
-                client.publish(TOPIC_LIGHT_ON, mqttMessage);
+                client.publish(TOPIC_LIGHT, mqttMessage);
 
                 // 조명 켜기
                 recentStatus.setLight(true);
@@ -120,7 +116,7 @@ public class ArduinoService {
                 mqttMessage.setQos(0); // 신뢰성 전달
 
                 // 특정 주제에 메시지 발행
-                client.publish(TOPIC_LIGHT_OFF, mqttMessage);
+                client.publish(TOPIC_LIGHT, mqttMessage);
 
                 // 조명 끄기
                 recentStatus.setLight(false);
@@ -158,7 +154,7 @@ public class ArduinoService {
                 mqttMessage.setQos(0); // 신뢰성 전달
 
                 // 특정 주제에 메시지 발행
-                client.publish(TOPIC_FAN_ON, mqttMessage);
+                client.publish(TOPIC_FAN, mqttMessage);
 
                 // 팬 켜기
                 recentStatus.setFan(true);
@@ -169,7 +165,7 @@ public class ArduinoService {
                 mqttMessage.setQos(0); // 신뢰성 전달
 
                 // 특정 주제에 메시지 발행
-                client.publish(TOPIC_FAN_OFF, mqttMessage);
+                client.publish(TOPIC_FAN, mqttMessage);
 
                 // 팬 끄기
                 recentStatus.setFan(false);
