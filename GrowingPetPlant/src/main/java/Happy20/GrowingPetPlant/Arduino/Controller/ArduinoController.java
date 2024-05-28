@@ -2,7 +2,10 @@ package Happy20.GrowingPetPlant.Arduino.Controller;
 
 import Happy20.GrowingPetPlant.Arduino.DTO.PostWateringReq;
 import Happy20.GrowingPetPlant.Arduino.Service.ArduinoService;
+import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,39 +44,29 @@ public class ArduinoController {
             return "Error";
     }
 
-    // 조명 on api
-    @PostMapping("/lightOn")
-    public String LightOn() {
-        if (arduinoService.lightingOnPlant())
-            return "Lighting On Plant";
+    // 조명 on/off api
+    @PostMapping("/lighting")
+    public ResponseEntity<Boolean> Lighting(@RequestParam("plantNumber") Long plantNumber) {
+        if (arduinoService.lightingPlant(plantNumber))
+        {
+            if (arduinoService.getLightingStatus(plantNumber))
+                return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
+            else
+                return ResponseEntity.status(HttpStatus.OK).body(Boolean.FALSE);
+        }
         else
-            return "Error";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Boolean.FALSE);
     }
 
-    // 조명 off api
-    @PostMapping("/lightOff")
-    public String LightOff() {
-        if (arduinoService.lightingOffPlant())
-            return "Lighting Off Plant";
-        else
-            return "Error";
-    }
-
-    // 팬 on api
-    @PostMapping("/fanOn")
-    public String FanOn() {
-        if (arduinoService.fanOnPlant())
-            return "Fan On Plant";
-        else
-            return "Error";
-    }
-
-    // 팬 off api
-    @PostMapping("/fanOff")
-    public String FanOff() {
-        if (arduinoService.fanOffPlant())
-            return "Fan Off Plant";
-        else
-            return "Error";
+    // 팬 on/off api
+    @PostMapping("/fanning")
+    public ResponseEntity<Boolean> Fanning(@RequestParam("plantNumber") Long plantNumber) {
+        if (arduinoService.fanningPlant(plantNumber)) {
+            if (arduinoService.getFanningStatus(plantNumber))
+                return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
+            else
+                return ResponseEntity.status(HttpStatus.OK).body(Boolean.FALSE);
+        } else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Boolean.FALSE);
     }
 }

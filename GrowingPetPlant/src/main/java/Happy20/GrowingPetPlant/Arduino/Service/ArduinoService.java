@@ -77,7 +77,7 @@ public class ArduinoService {
             // 연결 해제
             client.disconnect();
 
-            Status status = statusRepository.findByPlantNumber(postWateringReq.getPlantNumber());
+            Status status = statusRepository.findRecentStatusByPlantNumber(postWateringReq.getPlantNumber());
             status.setWateringDate(postWateringReq.getWateringDate());
 
             return (true);
@@ -89,7 +89,7 @@ public class ArduinoService {
     }
 
     @Transactional
-    public boolean lightingOnPlant() {
+    public boolean lightingPlant(Long plantNumber) {
 
         try(MqttClient client = new MqttClient(BROKER, CLIENT_ID)) {     // MQTT 클라이언트 생성, try-with-resource : 자동 해제 위해
 
@@ -100,12 +100,31 @@ public class ArduinoService {
             // MQTT 브로커에 연결
             client.connect(connOpts);
 
-            // 메시지 생성 및 발행
-            MqttMessage mqttMessage = new MqttMessage(LIGHT_ON.getBytes());
-            mqttMessage.setQos(0); // 신뢰성 전달
+            Status recentStatus = statusRepository.findRecentStatusByPlantNumber(plantNumber);
 
-            // 특정 주제에 메시지 발행
-            client.publish(TOPIC_LIGHT_ON, mqttMessage);
+            if(!recentStatus.getLight()){
+
+                // 메시지 생성 및 발행
+                MqttMessage mqttMessage = new MqttMessage(LIGHT_ON.getBytes());
+                mqttMessage.setQos(0); // 신뢰성 전달
+
+                // 특정 주제에 메시지 발행
+                client.publish(TOPIC_LIGHT_ON, mqttMessage);
+
+                // 조명 켜기
+                recentStatus.setLight(true);
+            }
+            else {
+                // 메시지 생성 및 발행
+                MqttMessage mqttMessage = new MqttMessage(LIGHT_OFF.getBytes());
+                mqttMessage.setQos(0); // 신뢰성 전달
+
+                // 특정 주제에 메시지 발행
+                client.publish(TOPIC_LIGHT_OFF, mqttMessage);
+
+                // 조명 끄기
+                recentStatus.setLight(false);
+            }
 
             // 연결 해제
             client.disconnect();
@@ -119,7 +138,7 @@ public class ArduinoService {
     }
 
     @Transactional
-    public boolean lightingOffPlant() {
+    public boolean fanningPlant(Long plantNumber) {
 
         try(MqttClient client = new MqttClient(BROKER, CLIENT_ID)) {     // MQTT 클라이언트 생성, try-with-resource : 자동 해제 위해
 
@@ -130,12 +149,31 @@ public class ArduinoService {
             // MQTT 브로커에 연결
             client.connect(connOpts);
 
-            // 메시지 생성 및 발행
-            MqttMessage mqttMessage = new MqttMessage(LIGHT_OFF.getBytes());
-            mqttMessage.setQos(0); // 신뢰성 전달
+            Status recentStatus = statusRepository.findRecentStatusByPlantNumber(plantNumber);
 
-            // 특정 주제에 메시지 발행
-            client.publish(TOPIC_LIGHT_OFF, mqttMessage);
+            if(!recentStatus.getFan()){
+
+                // 메시지 생성 및 발행
+                MqttMessage mqttMessage = new MqttMessage(FAN_ON.getBytes());
+                mqttMessage.setQos(0); // 신뢰성 전달
+
+                // 특정 주제에 메시지 발행
+                client.publish(TOPIC_FAN_ON, mqttMessage);
+
+                // 팬 켜기
+                recentStatus.setFan(true);
+            }
+            else {
+                // 메시지 생성 및 발행
+                MqttMessage mqttMessage = new MqttMessage(FAN_OFF.getBytes());
+                mqttMessage.setQos(0); // 신뢰성 전달
+
+                // 특정 주제에 메시지 발행
+                client.publish(TOPIC_FAN_OFF, mqttMessage);
+
+                // 팬 끄기
+                recentStatus.setFan(false);
+            }
 
             // 연결 해제
             client.disconnect();
@@ -149,62 +187,22 @@ public class ArduinoService {
     }
 
     @Transactional
-    public boolean fanOnPlant() {
+    public boolean getLightingStatus(Long plantNumber) {
+        Status recentStatus = statusRepository.findRecentStatusByPlantNumber(plantNumber);
 
-        try(MqttClient client = new MqttClient(BROKER, CLIENT_ID)) {     // MQTT 클라이언트 생성, try-with-resource : 자동 해제 위해
-
-            // MQTT 연결 옵션 설정
-            MqttConnectOptions connOpts = new MqttConnectOptions();
-            connOpts.setCleanSession(true);
-
-            // MQTT 브로커에 연결
-            client.connect(connOpts);
-
-            // 메시지 생성 및 발행
-            MqttMessage mqttMessage = new MqttMessage(FAN_ON.getBytes());
-            mqttMessage.setQos(0); // 신뢰성 전달
-
-            // 특정 주제에 메시지 발행
-            client.publish(TOPIC_FAN_ON, mqttMessage);
-
-            // 연결 해제
-            client.disconnect();
-
+        if (recentStatus.getLight())
             return (true);
-        }
-        catch (MqttException e) {
-            log.error("에러가 발생했습니다.", e);
+        else
             return (false);
-        }
     }
 
     @Transactional
-    public boolean fanOffPlant() {
+    public boolean getFanningStatus(Long plantNumber) {
+        Status recentStatus = statusRepository.findRecentStatusByPlantNumber(plantNumber);
 
-        try(MqttClient client = new MqttClient(BROKER, CLIENT_ID)) {     // MQTT 클라이언트 생성, try-with-resource : 자동 해제 위해
-
-            // MQTT 연결 옵션 설정
-            MqttConnectOptions connOpts = new MqttConnectOptions();
-            connOpts.setCleanSession(true);
-
-            // MQTT 브로커에 연결
-            client.connect(connOpts);
-
-            // 메시지 생성 및 발행
-            MqttMessage mqttMessage = new MqttMessage(FAN_OFF.getBytes());
-            mqttMessage.setQos(0); // 신뢰성 전달
-
-            // 특정 주제에 메시지 발행
-            client.publish(TOPIC_FAN_OFF, mqttMessage);
-
-            // 연결 해제
-            client.disconnect();
-
+        if (recentStatus.getFan())
             return (true);
-        }
-        catch (MqttException e) {
-            log.error("에러가 발생했습니다.", e);
+        else
             return (false);
-        }
     }
 }

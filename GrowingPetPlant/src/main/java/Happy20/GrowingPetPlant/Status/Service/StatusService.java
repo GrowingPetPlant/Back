@@ -20,8 +20,8 @@ public class StatusService {
     private final UserPlantRepository userPlantRepository;
 
     // 상태 생성
-    public void createStatus() {
-        Status recentStatus = statusRepository.findRecentStatus();
+    public void createStatus(Long plantNumber) {
+        Status recentStatus = statusRepository.findRecentStatusByPlantNumber(plantNumber);
 
         Status newStatus = Status.builder()
                 .moisture(recentStatus.getMoisture())
