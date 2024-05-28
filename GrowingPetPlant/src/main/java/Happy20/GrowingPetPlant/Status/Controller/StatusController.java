@@ -54,4 +54,13 @@ public class StatusController {
     public List<LocalDate> getWateringDates(@RequestParam("plantNumber") Long plantNumber) {
         return statusService.getWateringDate(plantNumber);
     }
+
+
+    //자란 일수 반환
+    @GetMapping("/days")
+    public ResponseEntity<Integer> getGrowingDays(@RequestParam("plantNumber") Long plantNumber) {
+        int days = statusService.getGrowingDays(plantNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(days);
+    }
+
 }
