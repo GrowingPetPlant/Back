@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @AllArgsConstructor
@@ -83,4 +84,13 @@ public class StatusService {
 
         return statusRepository.findWateringByPlantNumber(plantNumber);
     }
+
+    @Transactional
+    public int getGrowingDays(Long plantNumber) {
+        Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+        LocalDate growingDate = status.getGrowingDate();
+        long daysBetween = ChronoUnit.DAYS.between(growingDate, LocalDate.now());
+        return (int) (daysBetween+1);   //1일부터 시작
+    }
+
 }
