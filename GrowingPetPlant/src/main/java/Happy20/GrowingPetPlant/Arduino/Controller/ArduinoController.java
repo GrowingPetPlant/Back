@@ -29,7 +29,7 @@ public class ArduinoController {
         LocalDate recentWateringDate = arduinoService.recentPlantWatering(postWateringReq.getPlantNumber());
 
         if (recentWateringDate.equals(postWateringDate))
-            return "오늘 이미 물을 주셨습니다. 물을 주시겠습니까?";
+            return "오늘 이미 물을 주셨습니다.\n물을 주시겠습니까?";
         else
             return "물을 주시겠습니까?";
     }
@@ -47,9 +47,9 @@ public class ArduinoController {
     // 조명 on/off api
     @PostMapping("/lighting")
     public ResponseEntity<Boolean> Lighting(@RequestParam("plantNumber") Long plantNumber) {
-        if (arduinoService.lightingPlant(plantNumber))
+        if (arduinoService.lightingPlant(plantNumber)) // 조명바꾸기
         {
-            if (arduinoService.getLightingStatus(plantNumber))
+            if (arduinoService.getLightingStatus(plantNumber)) //지금 켜져있으면 true
                 return ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE);
             else
                 return ResponseEntity.status(HttpStatus.OK).body(Boolean.FALSE);
