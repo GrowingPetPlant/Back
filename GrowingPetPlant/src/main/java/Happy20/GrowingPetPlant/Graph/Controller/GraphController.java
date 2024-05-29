@@ -1,15 +1,12 @@
 package Happy20.GrowingPetPlant.Graph.Controller;
 
+import Happy20.GrowingPetPlant.Graph.Domain.Graph;
 import Happy20.GrowingPetPlant.Graph.Service.GraphService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @RestController
 @RequestMapping("graph")
@@ -18,10 +15,28 @@ public class GraphController {
 
     public GraphController(GraphService graphService) { this.graphService = graphService; }
 
-    // 그래프 정보 생성 api
+    // 그래프 정보 생성(다음날로 넘어가는 정각) api
+    // 모든 값 0으로 초기화
     @PostMapping("/create")
-    public ResponseEntity<String> createGraph(@RequestParam("createTime") LocalDate today) {
-        graphService.createGraph(today);
+    public ResponseEntity<String> createGraph(@RequestParam("date") LocalDate date) {
+        graphService.createGraph(date);
         return ResponseEntity.status(HttpStatus.OK).body("그래프 정보를 생성했습니다.");
+    }
+
+    // 그래프 정보 수정(6시간 단위) api
+    @PatchMapping("/update")
+    public ResponseEntity<Graph> modifyGraph(@RequestParam("date") LocalDate date) {
+        Graph update = graphService.updateGraph(date);
+        if (update == null)
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        else
+            return ResponseEntity.status(HttpStatus.OK).body(update);
+
+    }
+
+    // 그래프 디스플레이 api
+    @GetMapping("/display")
+    public Graph displayGraph(@RequestParam("date") LocalDate date) {
+        return (graphService.getGraphInfo(date));
     }
 }

@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import java.time.LocalDate;
 import java.util.List;
 
-// 온도, 습도, 토양 습도
 @RestController
 @RequestMapping("status")
 public class StatusController {
@@ -21,7 +20,7 @@ public class StatusController {
         this.arduinoService = arduinoService;
     }
 
-    // 식물 상태 정각 생성 api
+    // 식물 상태 정각 생성(1시간) api
     @PostMapping("/create")
     public ResponseEntity<String> createStatus(@RequestParam("plantNumber") Long plantNumber) {
         statusService.createStatus(plantNumber);
