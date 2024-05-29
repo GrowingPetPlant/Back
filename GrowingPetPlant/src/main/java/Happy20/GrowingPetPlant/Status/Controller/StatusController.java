@@ -1,5 +1,6 @@
 package Happy20.GrowingPetPlant.Status.Controller;
 
+import Happy20.GrowingPetPlant.Arduino.Service.ArduinoService;
 import Happy20.GrowingPetPlant.Status.Service.StatusService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,11 @@ import java.util.List;
 @RequestMapping("status")
 public class StatusController {
     private final StatusService statusService;
+    private final ArduinoService arduinoService;
 
-    public StatusController(StatusService statusService) {
+    public StatusController(StatusService statusService, ArduinoService arduinoService) {
         this.statusService = statusService;
+        this.arduinoService = arduinoService;
     }
 
     // 식물 상태 정각 생성 api
@@ -61,6 +64,20 @@ public class StatusController {
     public ResponseEntity<Integer> getGrowingDays(@RequestParam("plantNumber") Long plantNumber) {
         int days = statusService.getGrowingDays(plantNumber);
         return ResponseEntity.status(HttpStatus.OK).body(days);
+    }
+
+    //조명상태가져오기
+    @GetMapping("/isLighted")
+    public ResponseEntity<Boolean> getLighting(@RequestParam("plantNumber") Long plantNumber) {
+        boolean lighted = arduinoService.getLightingStatus(plantNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(lighted);
+    }
+
+    //팬상태가져오기
+    @GetMapping("/isFanned")
+    public ResponseEntity<Boolean> getFanned(@RequestParam("plantNumber") Long plantNumber) {
+        boolean fanned = arduinoService.getFanningStatus(plantNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(fanned);
     }
 
 }
