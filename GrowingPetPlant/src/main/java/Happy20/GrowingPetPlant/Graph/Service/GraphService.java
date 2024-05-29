@@ -20,21 +20,47 @@ public class GraphService {
     private StatusRepository statusRepository;
     private GraphRepository graphRepository;
 
-    // 그래프 평균 data 생성
-    public void createGraph(LocalDate today) {
-        LocalDate yesterday = today.minusDays(1);
+    // 0으로 초기화 된 그래프 데이터 생성(초기값)
+    public void createGraph(LocalDate date) {
 
-        LocalDateTime startOfYesterday = LocalDateTime.of(yesterday, LocalTime.MIN);
-        LocalDateTime endOfYesterday = LocalDateTime.of(yesterday, LocalTime.MAX);
+        // 0으로 초기화 된 그래프 객체 생성
+        Graph newGraph = Graph.builder()
+                .tempDawn(0)
+                .tempMorning(0)
+                .tempDay(0)
+                .tempNight(0)
+                .moistureDawn(0)
+                .moistureMorning(0)
+                .moistureDay(0)
+                .moistureNight(0)
+                .humiDawn(0)
+                .humiMorning(0)
+                .humiDay(0)
+                .humiNight(0)
+                .date(date)
+                .build();
 
-        List<Status> ondDayStatus = statusRepository.findAllByStatusCreateTimeBetween(startOfYesterday, endOfYesterday);
+        graphRepository.save(newGraph);
+    }
+
+    // 그래프 정보 업데이트(그래프 평균 data)
+    public Graph updateGraph(LocalDate today) {
+
+        LocalDateTime startOfToday = LocalDateTime.of(today, LocalTime.MIN);
+        LocalDateTime endOfToday = LocalDateTime.of(today, LocalTime.MAX);
+
+        List<Status> todayStatus = statusRepository.findAllByStatusCreateTimeBetween(startOfToday, endOfToday);
+        Graph update = graphRepository.findByDate(today);
+
+        if (todayStatus.isEmpty() || update == null)
+            return (null);
 
         List<Status> dawn = new ArrayList<>();
         List<Status> morning = new ArrayList<>();
         List<Status> day = new ArrayList<>();
-        List<Status> night = new ArrayList<>();;
+        List<Status> night = new ArrayList<>();
 
-        for (Status status : ondDayStatus) {
+        for (Status status : todayStatus) {
             int hour = status.getCreateTime().getHour();
             if (hour < 6) {
                 dawn.add(status);
@@ -73,39 +99,53 @@ public class GraphService {
         }
 
         // 평균값 계산
-        tempDawn /= dawn.size();
-        moistureDawn /= dawn.size();
-        humiDawn /= dawn.size();
+        if (!dawn.isEmpty()) {
+            tempDawn /= dawn.size();
+            moistureDawn /= dawn.size();
+            humiDawn /= dawn.size();
+        }
 
-        tempMorning /= morning.size();
-        moistureMorning /= morning.size();
-        humiMorning /= morning.size();
+        if (!morning.isEmpty()) {
+            tempMorning /= morning.size();
+            moistureMorning /= morning.size();
+            humiMorning /= morning.size();
+        }
 
-        tempDay /= day.size();
-        moistureDay /= day.size();
-        humiDay /= day.size();
+        if (!day.isEmpty()) {
+            tempDay /= day.size();
+            moistureDay /= day.size();
+            humiDay /= day.size();
+        }
 
-        tempNight /= night.size();
-        moistureNight /= night.size();
-        humiNight /= night.size();
+        if (!night.isEmpty()) {
+            tempNight /= night.size();
+            moistureNight /= night.size();
+            humiNight /= night.size();
+        }
 
-        // 계산된 평균값으로 그래프 객체 생성
-        Graph newGraph = Graph.builder()
-                .tempDawn(tempDawn)
-                .tempMorning(tempMorning)
-                .tempDay(tempDay)
-                .tempNight(tempNight)
-                .moistureDawn(moistureDawn)
-                .moistureMorning(moistureMorning)
-                .moistureDay(moistureDay)
-                .moistureNight(moistureNight)
-                .humiDawn(humiDawn)
-                .humiMorning(humiMorning)
-                .humiDay(humiDay)
-                .humiNight(humiNight)
-                .date(today.minusDays(1))
-                .build();
+        update.setTempDawn(tempDawn);
+        update.setTempMorning(tempMorning);
+        update.setTempDay(tempDay);
+        update.setTempNight(tempNight);
 
-        graphRepository.save(newGraph);
+        update.setHumiDawn(humiDawn);
+        update.setHumiMorning(humiMorning);
+        update.setHumiDay(humiDay);
+        update.setHumiNight(humiNight);
+
+        update.setMoistureDawn(moistureDawn);
+        update.setMoistureMorning(moistureMorning);
+        update.setMoistureDay(moistureDay);
+        update.setMoistureNight(moistureNight);
+
+        graphRepository.save(update);
+
+        return (update);
+    }
+
+    // 그래프 display
+    public Graph getGraphInfo(LocalDate date)
+    {
+        return (graphRepository.findByDate(date));
     }
 }
