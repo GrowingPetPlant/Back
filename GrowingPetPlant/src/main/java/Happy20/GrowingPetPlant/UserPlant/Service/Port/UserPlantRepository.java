@@ -13,6 +13,6 @@ public interface UserPlantRepository extends JpaRepository<UserPlant, Long> {
     UserPlant findByUserNumber(Long userNumber);
     UserPlant findByPlantNumber(Long plantNumber);
     // 식물 번호로 물 준 날짜 리스트 리턴
-    @Query("SELECT s.plantNumber FROM Status s")
+    @Query("SELECT DISTINCT s.plantNumber FROM Status s")
     List<Long> findAllPlantNumber();
 }
