@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequestMapping("userplant")
 public class UserPlantController {
@@ -27,5 +30,11 @@ public class UserPlantController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         else
             return ResponseEntity.status(HttpStatus.OK).body(userPlant);
+    }
+
+    // 물 준 날짜 리스트 리턴 api
+    @GetMapping("/findAllPlant")
+    public List<Long> findAllPlant() {
+        return userPlantService.findAllPlantNumber();
     }
 }
