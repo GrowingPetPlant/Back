@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class UserPlantService {
@@ -15,5 +18,10 @@ public class UserPlantService {
     @Transactional
     public UserPlant validateUserPlant(Long userNumber) {
         return userPlantRepository.findByUserNumber(userNumber);
+    }
+
+    @Transactional
+    public List<Long> findAllPlantNumber() {
+        return userPlantRepository.findAllPlantNumber();
     }
 }
