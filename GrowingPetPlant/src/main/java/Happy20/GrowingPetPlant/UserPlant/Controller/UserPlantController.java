@@ -32,7 +32,6 @@ public class UserPlantController {
             return ResponseEntity.status(HttpStatus.OK).body(userPlant);
     }
 
-    // 물 준 날짜 리스트 리턴 api
     @GetMapping("/findAllPlant")
     public List<Long> findAllPlant() {
         return userPlantService.findAllPlantNumber();
