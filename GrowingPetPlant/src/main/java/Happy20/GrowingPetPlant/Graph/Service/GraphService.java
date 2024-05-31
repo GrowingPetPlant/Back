@@ -146,6 +146,14 @@ public class GraphService {
     // 그래프 display
     public Graph getGraphInfo(LocalDate date)
     {
-        return (graphRepository.findByDate(date));
+        if(graphRepository.findByDate(date)==null)
+            if(!date.isAfter(LocalDate.now())) {
+                createGraph(date);
+                return graphRepository.findByDate(date);
+            }
+            else
+                return new Graph(0,0,0,0,0,0,0,0,0,0,0,0,date);
+        else
+            return (graphRepository.findByDate(date));
     }
 }
