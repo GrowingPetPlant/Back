@@ -147,12 +147,7 @@ public class GraphService {
     public Graph getGraphInfo(LocalDate date)
     {
         if(graphRepository.findByDate(date)==null)
-            if(!date.isAfter(LocalDate.now())) {
-                createGraph(date);
-                return graphRepository.findByDate(date);
-            }
-            else
-                return new Graph(0,0,0,0,0,0,0,0,0,0,0,0,date);
+            return new Graph(0,0,0,0,0,0,0,0,0,0,0,0,date);
         else
             return (graphRepository.findByDate(date));
     }
