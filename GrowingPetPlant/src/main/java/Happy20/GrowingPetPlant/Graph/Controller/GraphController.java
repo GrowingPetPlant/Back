@@ -25,12 +25,11 @@ public class GraphController {
 
     // 그래프 정보 수정(6시간 단위) api
     @PatchMapping("/update")
-    public ResponseEntity<Graph> modifyGraph(@RequestParam("date") LocalDate date) {
-        Graph update = graphService.updateGraph(date);
-        if (update == null)
-            return ResponseEntity.status(HttpStatus.OK).body(null);
+    public ResponseEntity<String> modifyGraph(@RequestParam("date") LocalDate date) {
+        if (graphService.updateGraph(date))
+            return ResponseEntity.status(HttpStatus.OK).body("그래프 정보를 수정했습니다.");
         else
-            return ResponseEntity.status(HttpStatus.OK).body(update);
+            return ResponseEntity.status(HttpStatus.OK).body("그래프 정보 수정에 실패했습니다.");
 
     }
 

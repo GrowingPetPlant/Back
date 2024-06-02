@@ -44,7 +44,7 @@ public class GraphService {
     }
 
     // 그래프 정보 업데이트(그래프 평균 data)
-    public Graph updateGraph(LocalDate today) {
+    public boolean updateGraph(LocalDate today) {
 
         LocalDateTime startOfToday = LocalDateTime.of(today, LocalTime.MIN);
         LocalDateTime endOfToday = LocalDateTime.of(today, LocalTime.MAX);
@@ -53,7 +53,7 @@ public class GraphService {
         Graph update = graphRepository.findByDate(today);
 
         if (todayStatus.isEmpty() || update == null)
-            return (null);
+            return (false);
 
         List<Status> dawn = new ArrayList<>();
         List<Status> morning = new ArrayList<>();
@@ -140,7 +140,7 @@ public class GraphService {
 
         graphRepository.save(update);
 
-        return (update);
+        return (true);
     }
 
     // 그래프 display
