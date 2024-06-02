@@ -19,14 +19,14 @@ public class Subscriber {
     private MqttClient client;
     private MqttConnectOptions connOpts;
 
-    @Value("${spring.datasource.url")
-    private String DB_URL;
+//    @Value("${spring.datasource.url")
+    private String DB_URL = "jdbc:mysql://34.64.63.166/GPP?serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
 
-    @Value("${spring.datasource.username}")
-    private String DB_USER;
+//    @Value("${spring.datasource.username}")
+    private String DB_USER = "root";
 
-    @Value("${spring.datasource.password}")
-    private String DB_PASSWORD;
+//    @Value("${spring.datasource.password}")
+    private String DB_PASSWORD = "Mysql2020!";
 
     // Private 생성자로 외부에서 인스턴스 생성을 막음
     private Subscriber() {}
@@ -87,7 +87,7 @@ public class Subscriber {
     public void insertToDatabase(String tempPayload, String humiPayload, String soilPayload) {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             // 데이터를 삽입할 테이블 이름
-            String query = "INSERT INTO STATUS (temperature, humidity, moisture) VALUES (?, ?, ?)";
+            String query = "UPDATE status SET temperature = ?, humidity = ?, moisture = ? WHERE plant_number = 4";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 // 각 토픽의 값을 쿼리에 설정
                 pstmt.setString(1, tempPayload);

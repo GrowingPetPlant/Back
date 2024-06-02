@@ -48,9 +48,9 @@ public class UserService {
         userPlantRepository.save(newUserPlant);
 
         Status newStatus = Status.builder()
-                .moisture(null)
-                .temperature(null)
-                .humidity(null)
+                .moisture(0L)
+                .temperature(0L)
+                .humidity(0L)
                 .light(Boolean.FALSE)
                 .plantNumber(newUserPlant.getPlantNumber())
                 .wateringDate(null)
