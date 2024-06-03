@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import Happy20.GrowingPetPlant.Subscribe.Subscriber;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
+import java.util.TimeZone;
+
 @SpringBootApplication
 @Component
 public class GrowingPetPlantApplication {
@@ -17,6 +20,16 @@ public class GrowingPetPlantApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(GrowingPetPlantApplication.class, args);
+
+		// 원하는 타임존으로 지정
+		TimeZone seoulTimeZone = TimeZone.getTimeZone("Asia/Seoul");
+
+		// JVM의 기본 타임존을 변경
+		TimeZone.setDefault(seoulTimeZone);
+
+		// 변경된 타임존 확인
+		TimeZone defaultTimeZone = TimeZone.getDefault();
+		System.out.println("Current TimeZone ID: " + defaultTimeZone.getID());
 
 		// Subscriber 인스턴스를 가져옴
 		Subscriber subscriber = Subscriber.getInstance();

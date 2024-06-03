@@ -49,8 +49,15 @@ public class GraphService {
         LocalDateTime startOfToday = LocalDateTime.of(today, LocalTime.MIN);
         LocalDateTime endOfToday = LocalDateTime.of(today, LocalTime.MAX);
 
+        System.out.println("startOfToday: " + startOfToday);
+        System.out.println("endOfToday: " + endOfToday);
+
         List<Status> todayStatus = statusRepository.findAllByStatusCreateTimeBetween(startOfToday, endOfToday);
-        Graph update = graphRepository.findByDate(today);
+
+        System.out.println("startOfToday: " + todayStatus.get(0));
+        System.out.println("endOfToday: " + todayStatus.get(todayStatus.size()-1));
+
+        Graph update = graphRepository.findGraphByDate(today);
 
         if (todayStatus.isEmpty() || update == null)
             return (false);
@@ -72,6 +79,11 @@ public class GraphService {
                 night.add(status);
             }
         }
+
+        System.out.println("Dawn records: " + dawn.size());
+        System.out.println("Morning records: " + morning.size());
+        System.out.println("Day records: " + day.size());
+        System.out.println("Night records: " + night.size());
 
         float tempDawn = 0, tempMorning = 0, tempDay = 0, tempNight = 0,
                 moistureDawn = 0, moistureMorning = 0, moistureDay = 0, moistureNight = 0,
@@ -146,9 +158,10 @@ public class GraphService {
     // 그래프 display
     public Graph getGraphInfo(LocalDate date)
     {
-        if(graphRepository.findByDate(date)==null)
+        Graph g = graphRepository.findGraphByDate(date);
+        if(g == null)
             return new Graph(0,0,0,0,0,0,0,0,0,0,0,0,date);
         else
-            return (graphRepository.findByDate(date));
+            return (g);
     }
 }
