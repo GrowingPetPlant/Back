@@ -36,6 +36,7 @@ public class GraphController {
     // 그래프 디스플레이 api
     @GetMapping("/display")
     public Graph displayGraph(@RequestParam("date") LocalDate date) {
+
         return (graphService.getGraphInfo(date));
     }
 }
