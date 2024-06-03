@@ -86,7 +86,7 @@ public class Subscriber {
     public void insertToDatabase(String tempPayload, String humiPayload, String soilPayload) {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             // 데이터를 삽입할 테이블 이름
-            String query = "UPDATE status SET temperature = ?, humidity = ?, moisture = ? WHERE plant_number = 4 ORDER BY status_number DESC LIMIT 1";
+            String query = "UPDATE status SET temperature = ?, humidity = ?, moisture = ? WHERE plant_number = 1 ORDER BY status_number DESC LIMIT 1";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 // 각 토픽의 값을 쿼리에 설정
                 pstmt.setString(1, tempPayload);
