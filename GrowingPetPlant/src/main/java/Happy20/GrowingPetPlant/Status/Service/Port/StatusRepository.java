@@ -13,7 +13,7 @@ import java.util.List;
 public interface StatusRepository extends JpaRepository<Status, Long> {
 
     // 식물 번호로 물 준 날짜 리스트 리턴
-    @Query("SELECT s.wateringDate FROM Status s WHERE s.plantNumber = :plantNumber")
+    @Query("SELECT DISTINCT s.wateringDate FROM Status s WHERE s.plantNumber = :plantNumber")
     List<LocalDate> findWateringByPlantNumber(@Param("plantNumber")Long plantNumber);
 
     // 식물 번호로 최근 상태 1개 조회
