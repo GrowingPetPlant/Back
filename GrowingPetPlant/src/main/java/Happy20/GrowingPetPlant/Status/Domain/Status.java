@@ -45,7 +45,6 @@ public class Status {
     // 엔티티가 저장되기 전에 호출되는 메서드
     @PrePersist
     protected void onCreate() {
-        this.growingDate = LocalDate.now();
         this.createTime = LocalDateTime.now();
     }
 
