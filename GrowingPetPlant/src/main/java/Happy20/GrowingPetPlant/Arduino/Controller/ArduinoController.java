@@ -28,7 +28,9 @@ public class ArduinoController {
         LocalDate postWateringDate = postWateringReq.getWateringDate();
         LocalDate recentWateringDate = arduinoService.recentPlantWatering(postWateringReq.getPlantNumber());
 
-        if (recentWateringDate.equals(postWateringDate))
+        if (recentWateringDate == null)
+            return "물을 주시겠습니까?";
+        else if (recentWateringDate.equals(postWateringDate))
             return "오늘 이미 물을 주셨습니다.\n물을 주시겠습니까?";
         else
             return "물을 주시겠습니까?";
