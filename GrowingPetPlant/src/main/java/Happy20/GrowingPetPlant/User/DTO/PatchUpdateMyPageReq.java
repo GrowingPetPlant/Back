@@ -17,18 +17,18 @@ public class PatchUpdateMyPageReq {
 
     private String phoneNumber;
 
-    private String plantType;
-
-    private String plantName;
+//    private String plantType;
+//
+//    private String plantName;
 
     @Builder
-    public PatchUpdateMyPageReq(Long userNumber, String id, String password, String userName, String phoneNumber, String plantType, String plantName) {
+    public PatchUpdateMyPageReq(Long userNumber, String id, String password, String userName, String phoneNumber) {
         this.userNumber = userNumber;
         this.id = id;
         this.password = password;
         this.userName = userName;
         this.phoneNumber = phoneNumber;
-        this.plantType = plantType;
-        this.plantName = plantName;
+//        this.plantType = plantType;
+//        this.plantName = plantName;
     }
 }

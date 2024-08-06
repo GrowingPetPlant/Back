@@ -1,69 +1,62 @@
 package Happy20.GrowingPetPlant.Status.Domain;
 
+import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
-@Data // Data : getter, setter 포함
+@Getter
+@Setter
 @Entity
-@Table(name = "STATUS")
+@Table(name = "status")
 @NoArgsConstructor
 public class Status {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //db가 자동으로 생성(값을 직접 입력할 필요 X, pk이기 때문에)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "status_number")
     private Long statusNumber;
 
-    private Long moisture;
+    @Column(name = "temperature")
+    private Double temperature;
 
-    private Long temperature;
+    @Column(name = "moisture")
+    private Double moisture; // 토양 습도
 
-    private Long humidity;
+    @Column(name = "humidity")
+    private Double humidity; // 대기 습도
 
+    @Column(name = "light")
     private Boolean light;
 
-    @Column(name = "plant_number")
-    private Long plantNumber;
-
-    @Column(name = "growing_date")
-    private LocalDate growingDate;
-
-    @Column(name = "watering_date")
-    private LocalDate wateringDate;
-
+    @Column(name = "fan")
     private Boolean fan;
+
+    @Column(name = "watering")
+    private Boolean watering;
 
     @Column(name = "create_time")
     private LocalDateTime createTime;
 
-    // 엔티티가 저장되기 전에 호출되는 메서드
-    @PrePersist
-    protected void onCreate() {
-        this.createTime = LocalDateTime.now();
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_plant_number")
+    @JsonBackReference
+    private UserPlant userPlant;
 
     @Builder
     //인수없는 생성자 자동으로 생성됨(NoArgsConstructor), 생성자
-    public Status(Long moisture, Long temperature, Long humidity, Boolean light, Long plantNumber,
-                  LocalDate growingDate, LocalDate wateringDate, Boolean fan, LocalDateTime createTime) {
+    public Status(Double moisture, Double temperature, Double humidity, Boolean light, Boolean fan,  Boolean watering, UserPlant userPlant) {
         this.moisture = moisture;
         this.temperature = temperature;
         this.humidity = humidity;
         this.light = light;
-        this.plantNumber = plantNumber;
-        this.growingDate = growingDate;
-        this.wateringDate = wateringDate;
         this.fan = fan;
-        this.createTime = createTime;
-    }
-
-    public void setWateringDate(LocalDate wateringDate) {
-        this.wateringDate = wateringDate;
+        this.watering = watering;
+        this.userPlant = userPlant;
+        this.createTime = LocalDateTime.now();
     }
 }

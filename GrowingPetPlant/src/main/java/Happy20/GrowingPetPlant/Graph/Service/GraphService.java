@@ -25,19 +25,7 @@ public class GraphService {
 
         // 0으로 초기화 된 그래프 객체 생성
         Graph newGraph = Graph.builder()
-                .tempDawn(0)
-                .tempMorning(0)
-                .tempDay(0)
-                .tempNight(0)
-                .moistureDawn(0)
-                .moistureMorning(0)
-                .moistureDay(0)
-                .moistureNight(0)
-                .humiDawn(0)
-                .humiMorning(0)
-                .humiDay(0)
-                .humiNight(0)
-                .date(date)
+                .graphDate(date)
                 .build();
 
         graphRepository.save(newGraph);
@@ -57,7 +45,7 @@ public class GraphService {
         System.out.println("startOfToday: " + todayStatus.get(0));
         System.out.println("endOfToday: " + todayStatus.get(todayStatus.size()-1));
 
-        Graph update = graphRepository.findGraphByDate(today);
+        Graph update = graphRepository.findGraphByGraphDate(today);
 
         if (todayStatus.isEmpty() || update == null)
             return (false);
@@ -85,9 +73,9 @@ public class GraphService {
         System.out.println("Day records: " + day.size());
         System.out.println("Night records: " + night.size());
 
-        float tempDawn = 0, tempMorning = 0, tempDay = 0, tempNight = 0,
-                moistureDawn = 0, moistureMorning = 0, moistureDay = 0, moistureNight = 0,
-                humiDawn = 0, humiMorning = 0, humiDay = 0, humiNight = 0;
+        Double tempDawn = 0D, tempMorning = 0D, tempDay = 0D, tempNight = 0D,
+                moistureDawn = 0D, moistureMorning = 0D, moistureDay = 0D, moistureNight = 0D,
+                humiDawn = 0D, humiMorning = 0D, humiDay = 0D, humiNight = 0D;
 
         for (Status status : dawn) {
             tempDawn += status.getTemperature();
@@ -158,9 +146,9 @@ public class GraphService {
     // 그래프 display
     public Graph getGraphInfo(LocalDate date)
     {
-        Graph g = graphRepository.findGraphByDate(date);
+        Graph g = graphRepository.findGraphByGraphDate(date);
         if(g == null)
-            return new Graph(0,0,0,0,0,0,0,0,0,0,0,0,date);
+            return new Graph(date);
         else
             return (g);
     }

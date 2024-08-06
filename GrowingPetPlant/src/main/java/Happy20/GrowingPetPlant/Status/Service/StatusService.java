@@ -21,18 +21,18 @@ public class StatusService {
     private final UserPlantRepository userPlantRepository;
 
     // 상태 생성
-    public void createStatus(Long plantNumber) {
-        Status recentStatus = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+    public void createStatus(Long userPlantNumber) {
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
 
         Status newStatus = Status.builder()
                 .moisture(recentStatus.getMoisture())
                 .temperature(recentStatus.getTemperature())
                 .humidity(recentStatus.getHumidity())
                 .light(recentStatus.getLight())
-                .plantNumber(recentStatus.getPlantNumber())
-                .growingDate(recentStatus.getGrowingDate())
-                .wateringDate(recentStatus.getWateringDate())
                 .fan(recentStatus.getFan())
+                .watering(false)
+                .userPlant(userPlant)
                 .build();
 
         statusRepository.save(newStatus);
@@ -40,38 +40,42 @@ public class StatusService {
 
     // 식물 최근 온도 표시
     @Transactional
-    public Long recentPlantTemp(Long plantNumber) {
-        Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+    public Double recentPlantTemp(Long userPlantNumber) {
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
 
-        return status.getTemperature();
+        return recentStatus.getTemperature();
     }
 
     // 식물 최근 습도 표시
     @Transactional
-    public Long recentPlantMoisture(Long plantNumber) {
-        Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+    public Double recentPlantMoisture(Long userPlantNumber) {
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
 
-        return status.getMoisture();
+        return recentStatus.getMoisture();
     }
 
     // 식물 최근 토양 습도 표시
     @Transactional
-    public Long recentPlantHumidity(Long plantNumber) {
-        Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+    public Double recentPlantHumidity(Long userPlantNumber) {
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
 
-        return status.getHumidity();
+        return recentStatus.getHumidity();
     }
 
     // 식물 이름 표시
     @Transactional
-    public String getPlantName(Long plantNumber) {
-        UserPlant userPlant = userPlantRepository.findByPlantNumber(plantNumber);
-        return userPlant.getPlantName();
+    public String getPlantName(Long userPlantNumber) {
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+
+        return userPlant.getUserPlantName();
     }
 
     // 식물 물 준 날짜 가져오기
     @Transactional
-    public List<LocalDate> getWateringDate(Long plantNumber) {
+    public List<LocalDate> getWateringDate(Long userPlantNumber) {
 
 //        List<LocalDate> localDateList = new ArrayList<>();
 //
@@ -82,14 +86,14 @@ public class StatusService {
 //            localDateList.add(localDate);
 //        }
 
-        return statusRepository.findWateringByPlantNumber(plantNumber);
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+        return statusRepository.findWateringByPlantNumber(userPlant);
     }
 
     @Transactional
-    public int getGrowingDays(Long plantNumber) {
-        Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
-        LocalDate growingDate = status.getGrowingDate();
-        long daysBetween = ChronoUnit.DAYS.between(growingDate, LocalDate.now());
+    public int getGrowingDays(Long userPlantNumber) {
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+        long daysBetween = ChronoUnit.DAYS.between(userPlant.getGrowingDate(), LocalDate.now());
         return (int) (daysBetween+1);   //1일부터 시작
     }
 

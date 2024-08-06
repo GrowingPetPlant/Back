@@ -3,6 +3,8 @@ package Happy20.GrowingPetPlant.Arduino.Service;
 import Happy20.GrowingPetPlant.Arduino.DTO.PostWateringReq;
 import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
+import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
+import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import lombok.AllArgsConstructor;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -41,14 +43,16 @@ public class ArduinoService {
     // 팬 끄기 메시지
     private static final String FAN_OFF = "0";
 
+    private final UserPlantRepository userPlantRepository;
     private final StatusRepository statusRepository;
 
     // 식물 최근 물 준 날짜 표시
     @Transactional
-    public LocalDate recentPlantWatering(Long plantNumber) {
-        Status status = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+    public LocalDate recentPlantWatering(Long userPlantNumber) {
 
-        return status.getWateringDate();
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+
+        return userPlant.getWateringDate();
     }
 
     @Transactional
@@ -73,8 +77,12 @@ public class ArduinoService {
             // 연결 해제
             client.disconnect();
 
-            Status status = statusRepository.findRecentStatusByPlantNumber(postWateringReq.getPlantNumber());
-            status.setWateringDate(postWateringReq.getWateringDate());
+            UserPlant userPlant = userPlantRepository.findByUserPlantNumber(postWateringReq.getUserPlantNumber());
+            Status status = statusRepository.findRecentStatusByUserPlant(userPlant);
+            userPlant.setWateringDate(postWateringReq.getWateringDate());
+            status.setWatering(true);
+            userPlantRepository.save(userPlant);
+            statusRepository.save(status);
 
             return (true);
         }
@@ -85,7 +93,7 @@ public class ArduinoService {
     }
 
     @Transactional
-    public boolean lightingPlant(Long plantNumber) {
+    public boolean lightingPlant(Long userPlantNumber) {
 
         try(MqttClient client = new MqttClient(BROKER, CLIENT_ID)) {     // MQTT 클라이언트 생성, try-with-resource : 자동 해제 위해
 
@@ -96,7 +104,8 @@ public class ArduinoService {
             // MQTT 브로커에 연결
             client.connect(connOpts);
 
-            Status recentStatus = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+            UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+            Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
 
             if(!recentStatus.getLight()){
 
@@ -134,7 +143,7 @@ public class ArduinoService {
     }
 
     @Transactional
-    public boolean fanningPlant(Long plantNumber) {
+    public boolean fanningPlant(Long userPlantNumber) {
 
         try(MqttClient client = new MqttClient(BROKER, CLIENT_ID)) {     // MQTT 클라이언트 생성, try-with-resource : 자동 해제 위해
 
@@ -145,7 +154,8 @@ public class ArduinoService {
             // MQTT 브로커에 연결
             client.connect(connOpts);
 
-            Status recentStatus = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+            UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+            Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
 
             if(!recentStatus.getFan()){
 
@@ -183,8 +193,9 @@ public class ArduinoService {
     }
 
     @Transactional
-    public boolean getLightingStatus(Long plantNumber) {
-        Status recentStatus = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+    public boolean getLightingStatus(Long userPlantNumber) {
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
 
         if (recentStatus.getLight())
             return (true);
@@ -193,8 +204,9 @@ public class ArduinoService {
     }
 
     @Transactional
-    public boolean getFanningStatus(Long plantNumber) {
-        Status recentStatus = statusRepository.findRecentStatusByPlantNumber(plantNumber);
+    public boolean getFanningStatus(Long userPlantNumber) {
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
 
         if (recentStatus.getFan())
             return (true);

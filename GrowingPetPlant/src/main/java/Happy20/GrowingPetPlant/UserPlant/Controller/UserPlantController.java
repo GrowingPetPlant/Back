@@ -21,16 +21,16 @@ public class UserPlantController {
     @Autowired
     public UserPlantController(UserPlantService userPlantService){this.userPlantService = userPlantService;}
 
-    // 유저번호 -> 식물정보찾기
-    @GetMapping("/findUserPlant")
-    public ResponseEntity<UserPlant> findUserPlantById(@RequestParam("userNumber") String userNumber) {
-        UserPlant userPlant = userPlantService.validateUserPlant(Long.valueOf(userNumber));
-
-        if(userPlant==null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        else
-            return ResponseEntity.status(HttpStatus.OK).body(userPlant);
-    }
+//    // 유저번호 -> 식물정보찾기
+//    @GetMapping("/findUserPlant")
+//    public ResponseEntity<UserPlant> findUserPlantById(@RequestParam("userNumber") String userNumber) {
+//        UserPlant userPlant = userPlantService.validateUserPlant(Long.valueOf(userNumber));
+//
+//        if(userPlant==null)
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        else
+//            return ResponseEntity.status(HttpStatus.OK).body(userPlant);
+//    }
 
     @GetMapping("/findAllPlant")
     public List<Long> findAllPlant() {
