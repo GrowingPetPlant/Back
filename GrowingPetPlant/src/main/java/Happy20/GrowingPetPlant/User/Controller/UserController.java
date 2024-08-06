@@ -5,23 +5,17 @@ import Happy20.GrowingPetPlant.User.Service.UserService;
 import Happy20.GrowingPetPlant.User.Domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("user")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     // 회원가입 api
     @PostMapping("/signup")
@@ -33,7 +27,7 @@ public class UserController {
     }
 
     // 회원가입 - 아이디 중복 검사 api
-    @PostMapping("/idCheck")
+    @GetMapping("/idCheck")
     public ResponseEntity<String> idCheck(@RequestParam("id") String id) {
         if (userService.validateId(id))
             return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 아이디입니다.");
@@ -42,7 +36,7 @@ public class UserController {
     }
 
     // 회원가입 - 닉네임 중복 검사 api
-    @PostMapping("/nameCheck")
+    @GetMapping("/nameCheck")
     public ResponseEntity<String> nameCheck(@RequestParam("name") String name) {
         if (userService.validateName(name))
             return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 닉네임입니다.");

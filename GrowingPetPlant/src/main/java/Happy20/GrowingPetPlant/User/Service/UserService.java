@@ -1,5 +1,7 @@
 package Happy20.GrowingPetPlant.User.Service;
 
+import Happy20.GrowingPetPlant.Plant.Domain.Plant;
+import Happy20.GrowingPetPlant.Plant.PlantRepository;
 import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import Happy20.GrowingPetPlant.User.DTO.*;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Service
@@ -19,12 +22,19 @@ import java.time.LocalDate;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PlantRepository plantRepository;
     private final UserPlantRepository userPlantRepository;
     private final StatusRepository statusRepository;
 
     // 회원 생성
     @Transactional
     public boolean createUser(PostSignupReq postSignupReq) {
+
+        if (userRepository.existsById(postSignupReq.getId()))
+            return (false);
+
+        if (userRepository.existsByUserName(postSignupReq.getUserName()))
+            return (false);
 
         User newUser = User.builder()
                 .id(postSignupReq.getId())
@@ -33,31 +43,29 @@ public class UserService {
                 .phoneNumber(postSignupReq.getPhoneNumber())
                 .build();
 
-        if (userRepository.existsById(newUser.getId()))
-            return (false);
-
-        if (userRepository.existsByUserName(newUser.getUserName()))
-            return (false);
-
         User saveUser = userRepository.save(newUser);
 
+        Plant plant = plantRepository.findPlantByPlantName(postSignupReq.getPlantName());
+
         UserPlant newUserPlant = UserPlant.builder()
-                .plantName(postSignupReq.getPlantName())
-                .plantType(postSignupReq.getPlantType())
-                .userNumber(saveUser.getUserNumber())
+                .userPlantName(postSignupReq.getPlantName())
+                .userPlantType(postSignupReq.getPlantType())
+                .main(true)
+                .wateringDate(null)
+                .user(saveUser)
+                .plant(plant)
                 .build();
 
         userPlantRepository.save(newUserPlant);
 
         Status newStatus = Status.builder()
-                .moisture(0L)
-                .temperature(0L)
-                .humidity(0L)
+                .moisture(0D)
+                .temperature(0D)
+                .humidity(0D)
                 .light(Boolean.FALSE)
-                .plantNumber(newUserPlant.getPlantNumber())
-                .wateringDate(null)
                 .fan(Boolean.FALSE)
-                .growingDate(LocalDate.now())
+                .watering(Boolean.FALSE)
+                .userPlant(newUserPlant)
                 .build();
 
         statusRepository.save(newStatus);
@@ -67,26 +75,15 @@ public class UserService {
 
     // 유효한 유저인지 확인
     @Transactional
-    public User validateUser(Long userNumber) {
-
-        return userRepository.findByUserNumber(userNumber);
-    }
+    public User validateUser(Long userNumber) { return userRepository.findByUserNumber(userNumber); }
 
     // 유효한 아이디인지 확인
     @Transactional
-    public boolean validateId(String id) {
-        if (userRepository.existsById(id))
-            return (false);
-        return (true);
-    }
+    public boolean validateId(String id) { return !userRepository.existsById(id); }
 
     // 유효한 닉네임인지 확인
     @Transactional
-    public boolean validateName(String name) {
-        if (userRepository.existsByUserName(name))
-            return (false);
-        return (true);
-    }
+    public boolean validateName(String name) { return !userRepository.existsByUserName(name); }
 
     // 로그인 확인
     @Transactional
@@ -115,7 +112,7 @@ public class UserService {
         if (user == null)
             return (false);
 
-        UserPlant userPlant = userPlantRepository.findByUserNumber(user.getUserNumber());
+        List<UserPlant> userPlant = userPlantRepository.findAllByUser(user);
         if (userPlant == null)
             return (false);
 
@@ -130,12 +127,13 @@ public class UserService {
             if (patchUpdateMyPageReq.getPhoneNumber() != null) {
                 user.setPhoneNumber(patchUpdateMyPageReq.getPhoneNumber());
             }
-            if (patchUpdateMyPageReq.getPlantType() != null) {
-                userPlant.setPlantType(patchUpdateMyPageReq.getPlantType());
-            }
-            if (patchUpdateMyPageReq.getPlantName() != null) {
-                userPlant.setPlantName(patchUpdateMyPageReq.getPlantName());
-            }
+            // 식물 정보 따로 수정하는 페이지 필요 !!
+//            if (patchUpdateMyPageReq.getPlantType() != null) {
+//                userPlant.setUserPlantType(patchUpdateMyPageReq.getPlantType());
+//            }
+//            if (patchUpdateMyPageReq.getPlantName() != null) {
+//                userPlant.setUserPlantName(patchUpdateMyPageReq.getPlantName());
+//            }
             return (true);
         }
         else
@@ -174,12 +172,12 @@ public class UserService {
     @Transactional
     public void deleteUser(String id){
         User user = userRepository.findById(id);
-        UserPlant userPlant = userPlantRepository.findByPlantNumber(user.getUserNumber());
+        List<UserPlant> userPlantList = userPlantRepository.findAllByUser(user);
 
-        if(user != null){
-            userPlantRepository.delete(userPlant);
+        if(user != null) {
+            userPlantRepository.deleteAll(userPlantList);
             userRepository.delete(user);
-        }else{
+        } else{
             throw new IllegalArgumentException("해당 사용자를 찾을 수 없습니다.");
         }
     }

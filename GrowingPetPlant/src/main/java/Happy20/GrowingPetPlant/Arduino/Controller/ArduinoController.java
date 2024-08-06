@@ -26,7 +26,7 @@ public class ArduinoController {
     @PostMapping("/putwater")
     public String putWatering(@RequestBody PostWateringReq postWateringReq) {
         LocalDate postWateringDate = postWateringReq.getWateringDate();
-        LocalDate recentWateringDate = arduinoService.recentPlantWatering(postWateringReq.getPlantNumber());
+        LocalDate recentWateringDate = arduinoService.recentPlantWatering(postWateringReq.getUserPlantNumber());
 
         if (recentWateringDate == null)
             return "물을 주시겠습니까?";

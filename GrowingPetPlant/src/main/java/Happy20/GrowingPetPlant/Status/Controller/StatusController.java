@@ -29,19 +29,19 @@ public class StatusController {
 
     // 식물 최근 온도 확인 api
     @GetMapping("/temp")
-    public Long GetRecentTemp(@RequestParam("plantNumber") Long plantNumber) {
+    public Double GetRecentTemp(@RequestParam("plantNumber") Long plantNumber) {
         return statusService.recentPlantTemp(plantNumber);
     }
 
     // 식물 최근 습도 확인 api
     @GetMapping("/moisture")
-    public Long GetMoisture(@RequestParam("plantNumber") Long plantNumber) {
+    public Double GetMoisture(@RequestParam("plantNumber") Long plantNumber) {
         return statusService.recentPlantMoisture(plantNumber);
     }
 
     // 식물 최근 토양 습도 확인 api
     @GetMapping("/humi")
-    public Long GetHumidity(@RequestParam("plantNumber") Long plantNumber) {
+    public Double GetHumidity(@RequestParam("plantNumber") Long plantNumber) {
         return statusService.recentPlantHumidity(plantNumber);
     }
 

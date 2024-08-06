@@ -15,13 +15,13 @@ public class UserPlantService {
 
     private final UserPlantRepository userPlantRepository;
 
-    @Transactional
-    public UserPlant validateUserPlant(Long userNumber) {
-        return userPlantRepository.findByUserNumber(userNumber);
-    }
+//    @Transactional
+//    public UserPlant validateUserPlant(Long userNumber) {
+//        return userPlantRepository.findByUserNumber(userNumber);
+//    }
 
     @Transactional
     public List<Long> findAllPlantNumber() {
-        return userPlantRepository.findAllPlantNumber();
+        return userPlantRepository.findAllByuserPlant();
     }
 }

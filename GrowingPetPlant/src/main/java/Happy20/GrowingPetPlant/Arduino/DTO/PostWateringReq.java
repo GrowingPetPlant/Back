@@ -9,13 +9,13 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 public class PostWateringReq {
-    private Long plantNumber;
+    private Long userPlantNumber;
 
     private LocalDate wateringDate;
 
     @Builder
-    public PostWateringReq(Long plantNumber, LocalDate wateringDate) {
-        this.plantNumber = plantNumber;
+    public PostWateringReq(Long userPlantNumber, LocalDate wateringDate) {
+        this.userPlantNumber = userPlantNumber;
         this.wateringDate = wateringDate;
     }
 }

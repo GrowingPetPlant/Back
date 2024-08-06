@@ -1,15 +1,15 @@
 package Happy20.GrowingPetPlant.Graph.Domain;
 
+import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
+@Getter @Setter
 @Entity
-@Table(name = "GRAPH")
+@Table(name = "graph")
 @NoArgsConstructor
 public class Graph {
 
@@ -19,61 +19,65 @@ public class Graph {
     private Long graphNumber;
 
     @Column(name = "temp_dawn")
-    private float tempDawn;
+    private Double tempDawn;
 
     @Column(name = "temp_morning")
-    private float tempMorning;
+    private Double tempMorning;
 
     @Column(name = "temp_day")
-    private float tempDay;
+    private Double tempDay;
 
     @Column(name = "temp_night")
-    private float tempNight;
+    private Double tempNight;
 
     @Column(name = "moisture_dawn")
-    private float moistureDawn;
+    private Double moistureDawn;
 
     @Column(name = "moisture_morning")
-    private float moistureMorning;
+    private Double moistureMorning;
 
     @Column(name = "moisture_day")
-    private float moistureDay;
+    private Double moistureDay;
 
     @Column(name = "moisture_night")
-    private float moistureNight;
+    private Double moistureNight;
 
     @Column(name = "humi_dawn")
-    private float humiDawn;
+    private Double humiDawn;
 
     @Column(name = "humi_morning")
-    private float humiMorning;
+    private Double humiMorning;
 
     @Column(name = "humi_day")
-    private float humiDay;
+    private Double humiDay;
 
     @Column(name = "humi_night")
-    private float humiNight;
+    private Double humiNight;
 
-    private LocalDate date;
+    @Column(name = "graph_date")
+    private LocalDate graphDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_plant_number")
+    @JsonBackReference
+    private UserPlant userPlant;
 
     @Builder
-    public Graph(float tempDawn, float tempMorning, float tempDay, float tempNight,
-                 float moistureDawn, float moistureMorning, float moistureDay, float moistureNight,
-                 float humiDawn, float humiMorning, float humiDay, float humiNight, LocalDate date)
+    public Graph(LocalDate graphDate)
     {
-        this.tempDawn = tempDawn;
-        this.tempMorning = tempMorning;
-        this.tempDay = tempDay;
-        this.tempNight = tempNight;
-        this.moistureDawn = moistureDawn;
-        this.moistureMorning = moistureMorning;
-        this.moistureDay = moistureDay;
-        this.moistureNight = moistureNight;
-        this.humiDawn = humiDawn;
-        this.humiMorning = humiMorning;
-        this.humiDay = humiDay;
-        this.humiNight = humiNight;
-        this.date = date;
+        this.tempDawn = 0D;
+        this.tempMorning = 0D;
+        this.tempDay = 0D;
+        this.tempNight = 0D;
+        this.moistureDawn = 0D;
+        this.moistureMorning = 0D;
+        this.moistureDay = 0D;
+        this.moistureNight = 0D;
+        this.humiDawn = 0D;
+        this.humiMorning = 0D;
+        this.humiDay = 0D;
+        this.humiNight = 0D;
+        this.graphDate = graphDate;
     }
 
 }
