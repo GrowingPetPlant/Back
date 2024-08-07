@@ -18,17 +18,17 @@ public class PostSignupReq {
 
     private String phoneNumber;
 
+    private String userPlantName;
+
     private String plantType;
 
-    private String plantName;
-
     @Builder
-    public PostSignupReq(String id, String password, String userName, String phoneNumber, String plantType, String plantName) {
+    public PostSignupReq(String id, String password, String userName, String phoneNumber, String userPlantName, String plantType) {
         this.id = id;
         this.password = password;
         this.userName = userName;
         this.phoneNumber = phoneNumber;
+        this.userPlantName = userPlantName;
         this.plantType = plantType;
-        this.plantName = plantName;
     }
 }

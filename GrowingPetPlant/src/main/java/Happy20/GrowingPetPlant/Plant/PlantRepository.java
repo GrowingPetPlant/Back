@@ -4,5 +4,5 @@ import Happy20.GrowingPetPlant.Plant.Domain.Plant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PlantRepository extends JpaRepository<Plant, Long> {
-    Plant findPlantByPlantName(String plantName);
+    Plant findPlantByPlantType(String plantType);
 }

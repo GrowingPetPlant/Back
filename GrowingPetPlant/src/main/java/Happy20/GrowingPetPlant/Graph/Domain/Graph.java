@@ -63,7 +63,7 @@ public class Graph {
     private UserPlant userPlant;
 
     @Builder
-    public Graph(LocalDate graphDate)
+    public Graph(UserPlant userPlant, LocalDate graphDate)
     {
         this.tempDawn = 0D;
         this.tempMorning = 0D;
@@ -77,7 +77,7 @@ public class Graph {
         this.humiMorning = 0D;
         this.humiDay = 0D;
         this.humiNight = 0D;
+        this.userPlant = userPlant;
         this.graphDate = graphDate;
     }
-
 }

@@ -47,8 +47,19 @@ public class Status {
     @JsonBackReference
     private UserPlant userPlant;
 
-    @Builder
-    //인수없는 생성자 자동으로 생성됨(NoArgsConstructor), 생성자
+    @Builder(builderMethodName = "statusByUserPlantBuilder")
+    public Status(UserPlant userPlant) {
+        this.moisture = 0D;
+        this.temperature = 0D;
+        this.humidity = 0D;
+        this.light = false;
+        this.fan = false;
+        this.watering = null;
+        this.userPlant = userPlant;
+        this.createTime = LocalDateTime.now();
+    }
+
+    @Builder(builderMethodName = "statusByStatusBuilder")
     public Status(Double moisture, Double temperature, Double humidity, Boolean light, Boolean fan,  Boolean watering, UserPlant userPlant) {
         this.moisture = moisture;
         this.temperature = temperature;

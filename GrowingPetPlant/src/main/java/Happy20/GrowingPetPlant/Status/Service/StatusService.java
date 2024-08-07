@@ -25,7 +25,7 @@ public class StatusService {
         UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
         Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
 
-        Status newStatus = Status.builder()
+        Status newStatus = Status.statusByStatusBuilder()
                 .moisture(recentStatus.getMoisture())
                 .temperature(recentStatus.getTemperature())
                 .humidity(recentStatus.getHumidity())

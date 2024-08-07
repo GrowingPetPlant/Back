@@ -27,18 +27,24 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'mysql:mysql-connector-java:8.0.32'
 	implementation 'org.springframework.boot:spring-boot-starter-integration'
 	implementation 'org.springframework.integration:spring-integration-mqtt'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	/* lombok */
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	/* jwt & security */
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+
 	/* Test */
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.mockito:mockito-inline:3.6.0'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.projectlombok:lombok'

@@ -1,5 +1,6 @@
 package Happy20.GrowingPetPlant.User.Domain;
 
+import Happy20.GrowingPetPlant.User.Authority;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -10,6 +11,8 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static Happy20.GrowingPetPlant.User.Authority.ROLE_USER;
 
 @Getter
 @Setter
@@ -50,6 +53,9 @@ public class User {
     @JsonManagedReference
     private List<UserPlant> plantsList = new ArrayList<>();
 
+    @Column(name = "authority")
+    private Authority authority;
+
     @Builder
     //인수없는 생성자 자동으로 생성됨(NoArgsConstructor), 생성자
     public User(String id, String password, String userName, String phoneNumber) {
@@ -57,5 +63,6 @@ public class User {
         this.password = password;
         this.userName = userName;
         this.phoneNumber = phoneNumber;
+        this.authority = ROLE_USER;
     }
 }

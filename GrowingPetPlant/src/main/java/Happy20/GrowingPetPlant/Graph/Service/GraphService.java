@@ -4,6 +4,8 @@ import Happy20.GrowingPetPlant.Graph.Domain.Graph;
 import Happy20.GrowingPetPlant.Graph.Service.Port.GraphRepository;
 import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
+import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
+import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ public class GraphService {
 
     private StatusRepository statusRepository;
     private GraphRepository graphRepository;
+    private UserPlantRepository userPlantRepository;
 
     // 0으로 초기화 된 그래프 데이터 생성(초기값)
     public void createGraph(LocalDate date) {
@@ -144,11 +147,13 @@ public class GraphService {
     }
 
     // 그래프 display
-    public Graph getGraphInfo(LocalDate date)
+    public Graph getGraphInfo(Long userPlantNumber, LocalDate date)
     {
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+
         Graph g = graphRepository.findGraphByGraphDate(date);
         if(g == null)
-            return new Graph(date);
+            return new Graph(userPlant, date);
         else
             return (g);
     }
