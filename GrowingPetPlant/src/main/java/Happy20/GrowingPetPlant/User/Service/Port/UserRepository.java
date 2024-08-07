@@ -9,6 +9,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUserName(String userName); // 해당 유저명이 DB에 존재하는지 조회
 
+    boolean existsByPhoneNumber(String phoneNumber); // 해당 전화번호가 DB에 존재하는지 조회
+
     User findById(String id); // 아이디로 사용자 조회
 
     User findByUserNumber(Long userNumber); // 유저 번호로 사용자 조회

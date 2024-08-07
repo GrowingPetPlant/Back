@@ -1,40 +1,51 @@
 package Happy20.GrowingPetPlant.User.Service;
 
-import Happy20.GrowingPetPlant.Plant.Domain.Plant;
-import Happy20.GrowingPetPlant.Plant.PlantRepository;
-import Happy20.GrowingPetPlant.Status.Domain.Status;
-import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
+import Happy20.GrowingPetPlant.JWT.JwtProvider;
+import Happy20.GrowingPetPlant.JWT.TokenDto;
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Domain.User;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
-import lombok.AllArgsConstructor;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
-
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PlantRepository plantRepository;
     private final UserPlantRepository userPlantRepository;
-    private final StatusRepository statusRepository;
+    private final JwtProvider jwtProvider;
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
-    // 회원 생성
+    // 토큰 정보 리턴
     @Transactional
-    public boolean createUser(PostSignupReq postSignupReq) {
+    public TokenDto setTokenInHeader(User loginUser, HttpServletResponse response) {
+        // 토큰 생성
+        TokenDto jwtToken = jwtProvider.generateToken(loginUser);
 
-        if (userRepository.existsById(postSignupReq.getId()))
-            return (false);
+        // 액세스 토큰 발급
+        log.info("request email = {}, password = {}", loginUser.getId(), loginUser.getPassword());
+        log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
-        if (userRepository.existsByUserName(postSignupReq.getUserName()))
-            return (false);
+        // Header에 정보 넘겨주기
+        response.setHeader("TokenType", "Bearer");
+        response.setHeader("AccessToken", jwtToken.getAccessToken());
+        response.setHeader("RefreshToken", jwtToken.getRefreshToken());
+
+        return jwtToken;
+    }
+
+    // 회원 정보 생성
+    @Transactional
+    public User createUser(PostSignupReq postSignupReq) {
 
         User newUser = User.builder()
                 .id(postSignupReq.getId())
@@ -43,34 +54,9 @@ public class UserService {
                 .phoneNumber(postSignupReq.getPhoneNumber())
                 .build();
 
-        User saveUser = userRepository.save(newUser);
+        userRepository.save(newUser);
 
-        Plant plant = plantRepository.findPlantByPlantName(postSignupReq.getPlantName());
-
-        UserPlant newUserPlant = UserPlant.builder()
-                .userPlantName(postSignupReq.getPlantName())
-                .userPlantType(postSignupReq.getPlantType())
-                .main(true)
-                .wateringDate(null)
-                .user(saveUser)
-                .plant(plant)
-                .build();
-
-        userPlantRepository.save(newUserPlant);
-
-        Status newStatus = Status.builder()
-                .moisture(0D)
-                .temperature(0D)
-                .humidity(0D)
-                .light(Boolean.FALSE)
-                .fan(Boolean.FALSE)
-                .watering(Boolean.FALSE)
-                .userPlant(newUserPlant)
-                .build();
-
-        statusRepository.save(newStatus);
-
-        return (true);
+        return newUser;
     }
 
     // 유효한 유저인지 확인
@@ -87,10 +73,14 @@ public class UserService {
 
     // 로그인 확인
     @Transactional
-    public Long validationLogin(PostLoginReq postLoginReq){
+    public TokenDto validationLogin(PostLoginReq postLoginReq, HttpServletResponse response){
         User user = userRepository.findById(postLoginReq.getId());
-        if(user != null && user.getPassword().equals(postLoginReq.getPassword()))
-            return (user.getUserNumber());
+
+        if(user != null && user.getPassword().equals(postLoginReq.getPassword())) {
+            // 토큰 생성 및 헤더에 토큰 정보 추가
+            TokenDto token = setTokenInHeader(user, response);
+            return (token);
+        }
         else
             return (null);
     }

@@ -21,9 +21,6 @@ public class Plant {
     @Column(name = "plant_number")
     private Long plantNumber;
 
-    @Column(name = "plant_name")
-    private String plantName;
-
     @Column(name = "plant_type")
     private String plantType;
 
@@ -31,8 +28,7 @@ public class Plant {
     private Long period;
 
     @Builder
-    public Plant(String plantName, String plantType, Long period) {
-        this.plantName = plantName;
+    public Plant(String plantType, Long period) {
         this.plantType = plantType;
         this.period = period;
     }
