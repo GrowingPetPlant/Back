@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserPlantRepository userPlantRepository;
     private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     // 토큰 정보 리턴
@@ -47,9 +49,11 @@ public class UserService {
     @Transactional
     public User createUser(PostSignupReq postSignupReq) {
 
+        String encodePw = passwordEncoder.encode(postSignupReq.getPassword());
+
         User newUser = User.builder()
                 .id(postSignupReq.getId())
-                .password(postSignupReq.getPassword())
+                .password(encodePw)
                 .userName(postSignupReq.getUserName())
                 .phoneNumber(postSignupReq.getPhoneNumber())
                 .build();
@@ -57,6 +61,19 @@ public class UserService {
         userRepository.save(newUser);
 
         return newUser;
+    }
+
+    // 로그인 확인
+    @Transactional
+    public PostLoginRes validationLogin(User user, String password, HttpServletResponse response) {
+
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            // 토큰 생성 및 헤더에 토큰 정보 추가
+            TokenDto token = setTokenInHeader(user, response);
+            return (new PostLoginRes("로그인에 성공했습니다.\n", token));
+        }
+        else
+            return (new PostLoginRes("잘못된 비밀번호입니다.\n", null));
     }
 
     // 유효한 유저인지 확인
@@ -70,20 +87,6 @@ public class UserService {
     // 유효한 닉네임인지 확인
     @Transactional
     public boolean validateName(String name) { return !userRepository.existsByUserName(name); }
-
-    // 로그인 확인
-    @Transactional
-    public TokenDto validationLogin(PostLoginReq postLoginReq, HttpServletResponse response){
-        User user = userRepository.findById(postLoginReq.getId());
-
-        if(user != null && user.getPassword().equals(postLoginReq.getPassword())) {
-            // 토큰 생성 및 헤더에 토큰 정보 추가
-            TokenDto token = setTokenInHeader(user, response);
-            return (token);
-        }
-        else
-            return (null);
-    }
 
     // 유저 번호 동일한지 확인
     @Transactional

@@ -1,11 +1,9 @@
 package Happy20.GrowingPetPlant.User.Controller;
 
-import Happy20.GrowingPetPlant.JWT.TokenDto;
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
 import Happy20.GrowingPetPlant.User.Service.UserService;
 import Happy20.GrowingPetPlant.User.Domain.User;
-import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import Happy20.GrowingPetPlant.UserPlant.Service.UserPlantService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,7 +25,11 @@ public class UserController {
 
     // 회원가입 api
     @PostMapping("/sign-up")
-    public ResponseEntity<String> signup(@Valid @RequestBody PostSignupReq postSignupReq) {
+    public ResponseEntity<String> signup(@Valid @RequestBody PostSignupReq postSignupReq, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body("유효성 검사 오류: " + bindingResult.getAllErrors().get(0).getDefaultMessage() + "\n");
+        }
 
         if (userRepository.existsById(postSignupReq.getId())) // 아이디 중복 체크
             return ResponseEntity.status(HttpStatus.OK).body("중복된 아이디입니다.\n");
@@ -46,12 +49,14 @@ public class UserController {
 
     // 로그인 api
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody PostLoginReq postLoginReq, HttpServletResponse response) {
-        TokenDto userToken = userService.validationLogin(postLoginReq, response);
-        if (userToken != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(userToken);
-        } else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    public ResponseEntity<PostLoginRes> login(@RequestBody PostLoginReq postLoginReq, HttpServletResponse response) {
+
+        User user = userRepository.findById(postLoginReq.getId());
+
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.OK).body(new PostLoginRes("잘못된 유저 정보입니다.\n", null));
+        else
+            return ResponseEntity.status(HttpStatus.OK).body(userService.validationLogin(user, postLoginReq.getPassword(), response));
     }
 
 //    // 회원가입 - 아이디 중복 검사 api
