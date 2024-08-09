@@ -28,23 +28,32 @@ public class UserController {
     public ResponseEntity<String> signup(@Valid @RequestBody PostSignupReq postSignupReq, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("유효성 검사 오류: " + bindingResult.getAllErrors().get(0).getDefaultMessage() + "\n");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효성 검사 오류: " + bindingResult.getAllErrors().get(0).getDefaultMessage() + "\n");
         }
-
-        if (userRepository.existsById(postSignupReq.getId())) // 아이디 중복 체크
-            return ResponseEntity.status(HttpStatus.OK).body("중복된 아이디입니다.\n");
-
-        if (userRepository.existsByUserName(postSignupReq.getUserName())) // 닉네임 중복 체크
-            return ResponseEntity.status(HttpStatus.OK).body("중복된 닉네임입니다.\n");
-
-        if (userRepository.existsByPhoneNumber(postSignupReq.getPhoneNumber())) // 핸드폰 번호 중복 체크
-            return ResponseEntity.status(HttpStatus.OK).body("중복된 핸드폰 번호입니다.\n");
 
         User newUser = userService.createUser(postSignupReq); // 유저 정보 생성
 
         userPlantService.createUserPlant(newUser, postSignupReq.getUserPlantName(), postSignupReq.getPlantType()); // 유저-식물 및 상태, 그래프 정보 생성
 
         return ResponseEntity.status(HttpStatus.OK).body("회원가입에 성공했습니다.\n");
+    }
+
+    // 회원가입 - 아이디 중복 검사 api
+    @GetMapping("/id-check")
+    public ResponseEntity<String> idCheck(@RequestParam("id") String id) {
+        if (userService.validateId(id))
+            return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 아이디입니다.");
+        else
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 아이디입니다.");
+    }
+
+    // 회원가입 - 닉네임 중복 검사 api
+    @GetMapping("/name-check")
+    public ResponseEntity<String> nameCheck(@RequestParam("name") String name) {
+        if (userService.validateName(name))
+            return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 닉네임입니다.");
+        else
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 닉네임입니다.");
     }
 
     // 로그인 api
@@ -54,28 +63,10 @@ public class UserController {
         User user = userRepository.findById(postLoginReq.getId());
 
         if (user == null)
-            return ResponseEntity.status(HttpStatus.OK).body(new PostLoginRes("잘못된 유저 정보입니다.\n", null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PostLoginRes("잘못된 유저 정보입니다.\n", null));
         else
             return ResponseEntity.status(HttpStatus.OK).body(userService.validationLogin(user, postLoginReq.getPassword(), response));
     }
-
-//    // 회원가입 - 아이디 중복 검사 api
-//    @GetMapping("/idCheck")
-//    public ResponseEntity<String> idCheck(@RequestParam("id") String id) {
-//        if (userService.validateId(id))
-//            return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 아이디입니다.");
-//        else
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용할 수 없는 아이디입니다.");
-//    }
-//
-//    // 회원가입 - 닉네임 중복 검사 api
-//    @GetMapping("/nameCheck")
-//    public ResponseEntity<String> nameCheck(@RequestParam("name") String name) {
-//        if (userService.validateName(name))
-//            return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 닉네임입니다.");
-//        else
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 닉네임입니다.");
-//    }
 
     // 마이페이지 수정 api
     @PatchMapping("/mypage")
