@@ -4,9 +4,12 @@ import Happy20.GrowingPetPlant.Graph.Domain.Graph;
 import Happy20.GrowingPetPlant.Graph.Service.Port.GraphRepository;
 import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
+import Happy20.GrowingPetPlant.User.Domain.User;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.cglib.core.Local;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,127 +26,182 @@ public class GraphService {
     private GraphRepository graphRepository;
     private UserPlantRepository userPlantRepository;
 
-    // 0으로 초기화 된 그래프 데이터 생성(초기값)
-    public void createGraph(LocalDate date) {
+    // 매일 자정 0으로 초기화 된 그래프 데이터 생성(초기값)
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    public void createGraph() {
 
-        // 0으로 초기화 된 그래프 객체 생성
-        Graph newGraph = Graph.builder()
-                .graphDate(date)
-                .build();
+        List<UserPlant> userPlantList = userPlantRepository.findAll();
 
-        graphRepository.save(newGraph);
+        for(UserPlant userPlant : userPlantList)
+        {
+            // 0으로 초기화 된 그래프 객체 생성
+            Graph newGraph = Graph.builder()
+                    .userPlant(userPlant)
+                    .graphDate(LocalDate.now())
+                    .build();
+
+            graphRepository.save(newGraph);
+        }
     }
 
-    // 그래프 정보 업데이트(그래프 평균 data)
-    public boolean updateGraph(LocalDate today) {
+    // 새벽 그래프 정보 업데이트(그래프 평균 data)
+    @Scheduled(cron = "0 0 6 * * *", zone = "Asia/Seoul")
+    public void updateDawnGraph() {
 
-        LocalDateTime startOfToday = LocalDateTime.of(today, LocalTime.MIN);
-        LocalDateTime endOfToday = LocalDateTime.of(today, LocalTime.MAX);
+        LocalDateTime startTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0));
+        LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 0));
 
-        System.out.println("startOfToday: " + startOfToday);
-        System.out.println("endOfToday: " + endOfToday);
+        System.out.println("startTime: " + startTime);
+        System.out.println("endTime: " + endTime);
 
-        List<Status> todayStatus = statusRepository.findAllByStatusCreateTimeBetween(startOfToday, endOfToday);
+        List<UserPlant> userPlantList = userPlantRepository.findAll();
 
-        System.out.println("startOfToday: " + todayStatus.get(0));
-        System.out.println("endOfToday: " + todayStatus.get(todayStatus.size()-1));
+        for (UserPlant userPlant : userPlantList)
+        {
+            List<Status> dawnStatus = statusRepository.findAllByUserPlantAndCreateTimeBetween(userPlant, startTime, endTime);
+            Double tempDawn = 0D, moistureDawn = 0D, humiDawn = 0D;
 
-        Graph update = graphRepository.findGraphByGraphDate(today);
-
-        if (todayStatus.isEmpty() || update == null)
-            return (false);
-
-        List<Status> dawn = new ArrayList<>();
-        List<Status> morning = new ArrayList<>();
-        List<Status> day = new ArrayList<>();
-        List<Status> night = new ArrayList<>();
-
-        for (Status status : todayStatus) {
-            int hour = status.getCreateTime().getHour();
-            if (hour < 6) {
-                dawn.add(status);
-            } else if (hour < 12) {
-                morning.add(status);
-            } else if (hour < 18) {
-                day.add(status);
-            } else {
-                night.add(status);
+            // 유저 별로 평균 내기
+            for (Status status : dawnStatus) {
+                tempDawn += status.getTemperature();
+                moistureDawn += status.getMoisture();
+                humiDawn += status.getHumidity();
             }
+
+            if (!dawnStatus.isEmpty()) {
+                tempDawn /= dawnStatus.size();
+                moistureDawn /= dawnStatus.size();
+                humiDawn /= dawnStatus.size();
+            }
+
+            Graph graph = graphRepository.findGraphByUserPlantAndGraphDate(userPlant, LocalDate.now());
+
+            graph.setTempDay(tempDawn);
+            graph.setHumiDay(humiDawn);
+            graph.setMoistureDay(moistureDawn);
+
+            graphRepository.save(graph);
         }
+    }
 
-        System.out.println("Dawn records: " + dawn.size());
-        System.out.println("Morning records: " + morning.size());
-        System.out.println("Day records: " + day.size());
-        System.out.println("Night records: " + night.size());
+    // 오전 그래프 정보 업데이트(그래프 평균 data)
+    @Scheduled(cron = "0 0 12 * * *", zone = "Asia/Seoul")
+    public void updateMorningGraph() {
 
-        Double tempDawn = 0D, tempMorning = 0D, tempDay = 0D, tempNight = 0D,
-                moistureDawn = 0D, moistureMorning = 0D, moistureDay = 0D, moistureNight = 0D,
-                humiDawn = 0D, humiMorning = 0D, humiDay = 0D, humiNight = 0D;
+        LocalDateTime startTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 0));
+        LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(12, 0));
 
-        for (Status status : dawn) {
-            tempDawn += status.getTemperature();
-            moistureDawn += status.getMoisture();
-            humiDawn += status.getHumidity();
+        System.out.println("startTime: " + startTime);
+        System.out.println("endTime: " + endTime);
+
+        List<UserPlant> userPlantList = userPlantRepository.findAll();
+
+        for (UserPlant userPlant : userPlantList)
+        {
+            List<Status> morningStatus = statusRepository.findAllByUserPlantAndCreateTimeBetween(userPlant, startTime, endTime);
+            Double tempMorning = 0D, moistureMorning = 0D, humiMorning = 0D;
+
+            // 유저 별로 평균 내기
+            for (Status status : morningStatus) {
+                tempMorning += status.getTemperature();
+                moistureMorning += status.getMoisture();
+                humiMorning += status.getHumidity();
+            }
+
+            if (!morningStatus.isEmpty()) {
+                tempMorning /= morningStatus.size();
+                moistureMorning /= morningStatus.size();
+                humiMorning /= morningStatus.size();
+            }
+
+            Graph graph = graphRepository.findGraphByUserPlantAndGraphDate(userPlant, LocalDate.now());
+
+            graph.setTempDay(tempMorning);
+            graph.setHumiDay(humiMorning);
+            graph.setMoistureDay(moistureMorning);
+
+            graphRepository.save(graph);
         }
-        for (Status status : morning) {
-            tempMorning += status.getTemperature();
-            moistureMorning += status.getMoisture();
-            humiMorning += status.getHumidity();
+    }
+
+    // 낮 그래프 정보 업데이트(그래프 평균 data)
+    @Scheduled(cron = "0 0 18 * * *", zone = "Asia/Seoul")
+    public void updateDayGraph() {
+
+        LocalDateTime startTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(12, 0));
+        LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(18, 0));
+
+        System.out.println("startTime: " + startTime);
+        System.out.println("endTime: " + endTime);
+
+        List<UserPlant> userPlantList = userPlantRepository.findAll();
+
+        for (UserPlant userPlant : userPlantList)
+        {
+            List<Status> dayStatus = statusRepository.findAllByUserPlantAndCreateTimeBetween(userPlant, startTime, endTime);
+            Double tempDay = 0D, moistureDay = 0D, humiDay = 0D;
+
+            // 유저 별로 평균 내기
+            for (Status status : dayStatus) {
+                tempDay += status.getTemperature();
+                moistureDay += status.getMoisture();
+                humiDay += status.getHumidity();
+            }
+
+            if (!dayStatus.isEmpty()) {
+                tempDay /= dayStatus.size();
+                moistureDay /= dayStatus.size();
+                humiDay /= dayStatus.size();
+            }
+
+            Graph graph = graphRepository.findGraphByUserPlantAndGraphDate(userPlant, LocalDate.now());
+
+            graph.setTempDay(tempDay);
+            graph.setHumiDay(humiDay);
+            graph.setMoistureDay(moistureDay);
+
+            graphRepository.save(graph);
         }
-        for (Status status : day) {
-            tempDay += status.getTemperature();
-            moistureDay += status.getMoisture();
-            humiDay += status.getHumidity();
+    }
+
+    // 밤 그래프 정보 업데이트(그래프 평균 data)
+    @Scheduled(cron = "0 59 23 * * *", zone = "Asia/Seoul")
+    public void updateNightGraph() {
+
+        LocalDateTime startTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(18, 0));
+        LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59));
+
+        System.out.println("startTime: " + startTime);
+        System.out.println("endTime: " + endTime);
+
+        List<UserPlant> userPlantList = userPlantRepository.findAll();
+
+        for (UserPlant userPlant : userPlantList)
+        {
+            List<Status> nightStatus = statusRepository.findAllByUserPlantAndCreateTimeBetween(userPlant, startTime, endTime);
+            Double tempNight = 0D, moistureNight = 0D, humiNight = 0D;
+
+            // 유저 별로 평균 내기
+            for (Status status : nightStatus) {
+                tempNight += status.getTemperature();
+                moistureNight += status.getMoisture();
+                humiNight += status.getHumidity();
+            }
+
+            if (!nightStatus.isEmpty()) {
+                tempNight /= nightStatus.size();
+                moistureNight /= nightStatus.size();
+                humiNight /= nightStatus.size();
+            }
+
+            Graph graph = graphRepository.findGraphByUserPlantAndGraphDate(userPlant, LocalDate.now());
+
+            graph.setTempNight(tempNight);
+            graph.setHumiNight(humiNight);
+            graph.setMoistureNight(moistureNight);
+
+            graphRepository.save(graph);
         }
-        for (Status status : night) {
-            tempNight += status.getTemperature();
-            moistureNight += status.getMoisture();
-            humiNight += status.getHumidity();
-        }
-
-        // 평균값 계산
-        if (!dawn.isEmpty()) {
-            tempDawn /= dawn.size();
-            moistureDawn /= dawn.size();
-            humiDawn /= dawn.size();
-        }
-
-        if (!morning.isEmpty()) {
-            tempMorning /= morning.size();
-            moistureMorning /= morning.size();
-            humiMorning /= morning.size();
-        }
-
-        if (!day.isEmpty()) {
-            tempDay /= day.size();
-            moistureDay /= day.size();
-            humiDay /= day.size();
-        }
-
-        if (!night.isEmpty()) {
-            tempNight /= night.size();
-            moistureNight /= night.size();
-            humiNight /= night.size();
-        }
-
-        update.setTempDawn(tempDawn);
-        update.setTempMorning(tempMorning);
-        update.setTempDay(tempDay);
-        update.setTempNight(tempNight);
-
-        update.setHumiDawn(humiDawn);
-        update.setHumiMorning(humiMorning);
-        update.setHumiDay(humiDay);
-        update.setHumiNight(humiNight);
-
-        update.setMoistureDawn(moistureDawn);
-        update.setMoistureMorning(moistureMorning);
-        update.setMoistureDay(moistureDay);
-        update.setMoistureNight(moistureNight);
-
-        graphRepository.save(update);
-
-        return (true);
     }
 
     // 그래프 display

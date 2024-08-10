@@ -63,7 +63,7 @@ public class UserController {
         User user = userRepository.findById(postLoginReq.getId());
 
         if (user == null)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PostLoginRes("잘못된 유저 정보입니다.\n", null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PostLoginRes(null, "잘못된 유저 정보입니다.\n", null));
         else
             return ResponseEntity.status(HttpStatus.OK).body(userService.validationLogin(user, postLoginReq.getPassword(), response));
     }

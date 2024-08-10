@@ -5,6 +5,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import Happy20.GrowingPetPlant.Subscribe.Subscriber;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
@@ -12,6 +13,7 @@ import java.util.TimeZone;
 
 @SpringBootApplication
 @Component
+@EnableScheduling
 public class GrowingPetPlantApplication {
 
 	private static String tempPayload;
@@ -44,23 +46,30 @@ public class GrowingPetPlantApplication {
 				// 연결이 끊어졌을 때 처리할 작업
 			}
 
+
+			// 토픽 구조 예시 : userPlant/{userPlantId}/temperature
 			@Override
 			public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
 				// 메시지 수신 시 처리할 작업
 				String payload = new String(mqttMessage.getPayload());
 				System.out.println("Message received on topic " + topic + ": " + payload);
 
+				// 토픽에서 userId와 plantId 추출
+				String[] topicLevels = topic.split("/");
+				String userPlantId = topicLevels[1];
+				String dataType = topicLevels[2];  // temperature, humidity, moisture 중 하나
+
 				// 데이터베이스에 저장
-				if (topic.equals("TOPIC_TEMP")) {
+				if (dataType.equals("temperature")) {
 					tempPayload = payload;
-				} else if (topic.equals("TOPIC_HUMI")) {
+				} else if (dataType.equals("humidity")) {
 					humiPayload = payload;
-				} else if (topic.equals("TOPIC_SOIL")) {
+				} else if (dataType.equals("moisture")) {
 					soilPayload = payload;
 				}
 
 				if (tempPayload != null && humiPayload != null && soilPayload != null) {
-					subscriber.insertToDatabase(tempPayload, humiPayload, soilPayload);
+					subscriber.insertToDatabase(Long.parseLong(userPlantId), tempPayload, humiPayload, soilPayload);
 					tempPayload = null;
 					humiPayload = null;
 					soilPayload = null;
@@ -76,9 +85,15 @@ public class GrowingPetPlantApplication {
 		// 연결
 		subscriber.connect();
 
-		// 여러 센서 구독
-		subscriber.subscribe("TOPIC_TEMP", 0);
-		subscriber.subscribe("TOPIC_HUMI", 0);
-		subscriber.subscribe("TOPIC_SOIL", 0);
+//		// 여러 센서 구독
+//		subscriber.subscribe("TOPIC_TEMP", 0);
+//		subscriber.subscribe("TOPIC_HUMI", 0);
+//		subscriber.subscribe("TOPIC_SOIL", 0);
+
+		// 모든 유저-식물에 대한 토픽 구독
+		subscriber.subscribe("userPlant/+/temperature", 0);
+		subscriber.subscribe("userPlant/+/humidity", 0);
+		subscriber.subscribe("userPlant/+/moisture", 0);
+
 	}
 }

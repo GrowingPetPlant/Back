@@ -25,4 +25,6 @@ public interface StatusRepository extends JpaRepository<Status, Long> {
     @Query("SELECT s FROM Status s WHERE s.createTime BETWEEN :start AND :end")
     List<Status> findAllByStatusCreateTimeBetween(        @Param("start") LocalDateTime start,
                                                           @Param("end") LocalDateTime end);
+
+    List<Status> findAllByUserPlantAndCreateTimeBetween(UserPlant userPlant, LocalDateTime start, LocalDateTime end);
 }
