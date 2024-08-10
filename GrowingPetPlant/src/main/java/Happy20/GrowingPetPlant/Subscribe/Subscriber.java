@@ -1,10 +1,13 @@
 package Happy20.GrowingPetPlant.Subscribe;
 
+import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
+import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,14 +21,14 @@ public class Subscriber {
     private MqttClient client;
     private MqttConnectOptions connOpts;
 
-//    @Value("${spring.datasource.url")
-    private String DB_URL = "jdbc:mysql://34.64.63.166/GPP?serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
+    @Value("${spring.datasource.url")
+    private String DB_URL;
 
-//    @Value("${spring.datasource.username}")
-    private String DB_USER = "root";
+    @Value("${spring.datasource.username}")
+    private String DB_USER;
 
-//    @Value("${spring.datasource.password}")
-    private String DB_PASSWORD = "Mysql2020!";
+    @Value("${spring.datasource.password}")
+    private String DB_PASSWORD;
 
     // Private 생성자로 외부에서 인스턴스 생성을 막음
     private Subscriber() {}
@@ -83,15 +86,17 @@ public class Subscriber {
     }
 
     // 데이터베이스에 데이터 삽입 메서드
-    public void insertToDatabase(String tempPayload, String humiPayload, String soilPayload) {
+    public void insertToDatabase(Long userPlantId, String tempPayload, String humiPayload, String soilPayload) {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+
             // 데이터를 삽입할 테이블 이름
-            String query = "UPDATE status SET temperature = ?, humidity = ?, moisture = ? WHERE plant_number = 1 ORDER BY status_number DESC LIMIT 1";
+            String query = "UPDATE status SET temperature = ?, humidity = ?, moisture = ? WHERE user_plant_number = ? ORDER BY status_number DESC LIMIT 1";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 // 각 토픽의 값을 쿼리에 설정
-                pstmt.setString(1, tempPayload);
-                pstmt.setString(2, humiPayload);
-                pstmt.setString(3, soilPayload);
+                pstmt.setDouble(1, Double.parseDouble(tempPayload));
+                pstmt.setDouble(2, Double.parseDouble(humiPayload));
+                pstmt.setDouble(3, Double.parseDouble(soilPayload));
+                pstmt.setLong(4, userPlantId);
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {

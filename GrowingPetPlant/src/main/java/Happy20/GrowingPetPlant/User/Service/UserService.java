@@ -70,10 +70,10 @@ public class UserService {
         if (passwordEncoder.matches(password, user.getPassword())) {
             // 토큰 생성 및 헤더에 토큰 정보 추가
             TokenDto token = setTokenInHeader(user, response);
-            return (new PostLoginRes("로그인에 성공했습니다.\n", token));
+            return (new PostLoginRes(user.getUserNumber(),"로그인에 성공했습니다.\n", token));
         }
         else
-            return (new PostLoginRes("잘못된 비밀번호입니다.\n", null));
+            return (new PostLoginRes(null, "잘못된 비밀번호입니다.\n", null));
     }
 
     // 유효한 유저인지 확인

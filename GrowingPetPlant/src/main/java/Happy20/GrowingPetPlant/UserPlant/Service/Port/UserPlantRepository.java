@@ -12,7 +12,6 @@ import java.util.List;
 
 public interface UserPlantRepository extends JpaRepository<UserPlant, Long> {
     Boolean existsByUserAndUserPlantName(User user, String userPlantName);
-
     List<UserPlant> findAllByUser(User user);
     UserPlant findByUserPlantNumber(Long userPlantNumber);
 

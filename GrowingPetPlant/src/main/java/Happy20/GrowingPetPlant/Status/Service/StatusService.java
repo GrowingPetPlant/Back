@@ -5,6 +5,7 @@ import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,22 +21,19 @@ public class StatusService {
     private final StatusRepository statusRepository;
     private final UserPlantRepository userPlantRepository;
 
-    // 상태 생성
-    public void createStatus(Long userPlantNumber) {
-        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
-        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
+    // 1시간에 한 번 상태 생성
+    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
+    public void createStatus() {
+        List<UserPlant> userPlantList = userPlantRepository.findAll();
 
-        Status newStatus = Status.statusByStatusBuilder()
-                .moisture(recentStatus.getMoisture())
-                .temperature(recentStatus.getTemperature())
-                .humidity(recentStatus.getHumidity())
-                .light(recentStatus.getLight())
-                .fan(recentStatus.getFan())
-                .watering(false)
-                .userPlant(userPlant)
-                .build();
+        for (UserPlant userPlant : userPlantList) {
 
-        statusRepository.save(newStatus);
+            Status newStatus = Status.statusByUserPlantBuilder()
+                    .userPlant(userPlant)
+                    .build();
+
+            statusRepository.save(newStatus);
+        }
     }
 
     // 식물 최근 온도 표시

@@ -21,11 +21,11 @@ public class StatusController {
     }
 
     // 식물 상태 정각 생성(1시간) api
-    @PostMapping("/create")
-    public ResponseEntity<String> createStatus(@RequestParam("plantNumber") Long plantNumber) {
-        statusService.createStatus(plantNumber);
-        return ResponseEntity.status(HttpStatus.OK).body("상태를 생성했습니다.");
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<String> createStatus(@RequestParam("plantNumber") Long plantNumber) {
+//        statusService.createStatus(plantNumber);
+//        return ResponseEntity.status(HttpStatus.OK).body("상태를 생성했습니다.");
+//    }
 
     // 식물 최근 온도 확인 api
     @GetMapping("/temp")

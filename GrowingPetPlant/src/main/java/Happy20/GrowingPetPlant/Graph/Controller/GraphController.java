@@ -15,23 +15,23 @@ public class GraphController {
 
     public GraphController(GraphService graphService) { this.graphService = graphService; }
 
-    // 그래프 정보 생성(다음날로 넘어가는 정각) api
-    // 모든 값 0으로 초기화
-    @PostMapping("/create")
-    public ResponseEntity<String> createGraph(@RequestParam("date") LocalDate date) {
-        graphService.createGraph(date);
-        return ResponseEntity.status(HttpStatus.OK).body("그래프 정보를 생성했습니다.");
-    }
-
-    // 그래프 정보 수정(6시간 단위) api
-    @PatchMapping("/update")
-    public ResponseEntity<String> modifyGraph(@RequestParam("date") LocalDate date) {
-        if (graphService.updateGraph(date))
-            return ResponseEntity.status(HttpStatus.OK).body("그래프 정보를 수정했습니다.");
-        else
-            return ResponseEntity.status(HttpStatus.OK).body("그래프 정보 수정에 실패했습니다.");
-
-    }
+//    // 그래프 정보 생성(다음날로 넘어가는 정각) api
+//    // 모든 값 0으로 초기화
+//    @PostMapping("/create")
+//    public ResponseEntity<String> createGraph(@RequestParam("date") LocalDate date) {
+//        graphService.createGraph(date);
+//        return ResponseEntity.status(HttpStatus.OK).body("그래프 정보를 생성했습니다.");
+//    }
+//
+//    // 그래프 정보 수정(6시간 단위) api
+//    @PatchMapping("/update")
+//    public ResponseEntity<String> modifyGraph(@RequestParam("date") LocalDate date) {
+//        if (graphService.updateGraph(date))
+//            return ResponseEntity.status(HttpStatus.OK).body("그래프 정보를 수정했습니다.");
+//        else
+//            return ResponseEntity.status(HttpStatus.OK).body("그래프 정보 수정에 실패했습니다.");
+//
+//    }
 
     // 그래프 디스플레이 api
     @GetMapping("/display")
