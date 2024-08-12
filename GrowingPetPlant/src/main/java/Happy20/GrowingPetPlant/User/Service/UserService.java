@@ -2,6 +2,9 @@ package Happy20.GrowingPetPlant.User.Service;
 
 import Happy20.GrowingPetPlant.JWT.JwtProvider;
 import Happy20.GrowingPetPlant.JWT.TokenDto;
+import Happy20.GrowingPetPlant.Status.Controller.StatusController;
+import Happy20.GrowingPetPlant.Status.Domain.Status;
+import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Domain.User;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
@@ -11,6 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +28,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserPlantRepository userPlantRepository;
+    private final StatusRepository statusRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -74,6 +80,17 @@ public class UserService {
         }
         else
             return (new PostLoginRes("잘못된 비밀번호입니다.\n", null));
+    }
+
+    // 홈 화면 정보 리턴
+    @Transactional
+    public GetHomeInfoRes getHomeInfo(String id) {
+        User user = userRepository.findById(id);
+        UserPlant userPlant = userPlantRepository.findFirstByUserOrderByUserPlantNumberAsc(user);
+        Status status = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
+
+        return (new GetHomeInfoRes("유저 홈 화면 정보입니다.\n", user.getUserNumber(), userPlant.getUserPlantNumber(),
+                userPlant.getUserPlantName(), status.getMoisture(), status.getHumidity(), status.getTemperature()));
     }
 
     // 유효한 유저인지 확인

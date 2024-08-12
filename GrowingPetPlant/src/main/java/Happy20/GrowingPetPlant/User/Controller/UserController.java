@@ -81,12 +81,7 @@ public class UserController {
         if (principal == null)
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GetHomeInfoRes("잘못된 유저 정보입니다.\n"));
 
-        User user = userRepository.findById(principal.getName());
-        UserPlant userPlant = userPlantRepository.findFirstByUserOrderByUserPlantNumberAsc(user);
-        Status status = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GetHomeInfoRes("유저 홈 화면 정보입니다.\n", user.getUserNumber(), userPlant.getUserPlantNumber(),
-                userPlant.getUserPlantName(), status.getMoisture(), status.getHumidity(), status.getTemperature()));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(userService.getHomeInfo(principal.getName()));
     }
 
     // 마이페이지 수정 api
