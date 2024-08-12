@@ -40,7 +40,7 @@ public class StatusService {
     @Transactional
     public Double recentPlantTemp(Long userPlantNumber) {
         UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
-        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
+        Status recentStatus = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
 
         return recentStatus.getTemperature();
     }
@@ -49,7 +49,7 @@ public class StatusService {
     @Transactional
     public Double recentPlantMoisture(Long userPlantNumber) {
         UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
-        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
+        Status recentStatus = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
 
         return recentStatus.getMoisture();
     }
@@ -58,7 +58,7 @@ public class StatusService {
     @Transactional
     public Double recentPlantHumidity(Long userPlantNumber) {
         UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
-        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
+        Status recentStatus = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
 
         return recentStatus.getHumidity();
     }
@@ -85,7 +85,7 @@ public class StatusService {
 //        }
 
         UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
-        return statusRepository.findWateringByPlantNumber(userPlant);
+        return statusRepository.findDistinctCreateTimeByUserPlantAndWateringTrue(userPlant);
     }
 
     @Transactional

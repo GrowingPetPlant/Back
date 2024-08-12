@@ -78,7 +78,7 @@ public class ArduinoService {
             client.disconnect();
 
             UserPlant userPlant = userPlantRepository.findByUserPlantNumber(postWateringReq.getUserPlantNumber());
-            Status status = statusRepository.findRecentStatusByUserPlant(userPlant);
+            Status status = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
             userPlant.setWateringDate(postWateringReq.getWateringDate());
             status.setWatering(true);
             userPlantRepository.save(userPlant);
@@ -105,7 +105,7 @@ public class ArduinoService {
             client.connect(connOpts);
 
             UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
-            Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
+            Status recentStatus = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
 
             if(!recentStatus.getLight()){
 
@@ -155,7 +155,7 @@ public class ArduinoService {
             client.connect(connOpts);
 
             UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
-            Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
+            Status recentStatus = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
 
             if(!recentStatus.getFan()){
 
@@ -195,7 +195,7 @@ public class ArduinoService {
     @Transactional
     public boolean getLightingStatus(Long userPlantNumber) {
         UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
-        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
+        Status recentStatus = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
 
         if (recentStatus.getLight())
             return (true);
@@ -206,7 +206,7 @@ public class ArduinoService {
     @Transactional
     public boolean getFanningStatus(Long userPlantNumber) {
         UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
-        Status recentStatus = statusRepository.findRecentStatusByUserPlant(userPlant);
+        Status recentStatus = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
 
         if (recentStatus.getFan())
             return (true);
