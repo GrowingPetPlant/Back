@@ -14,17 +14,16 @@ import java.util.List;
 public interface StatusRepository extends JpaRepository<Status, Long> {
 
     // 식물 번호로 물 준 날짜 리스트 리턴
-    @Query("SELECT DISTINCT s.createTime FROM Status s WHERE s.userPlant = :userPlant AND s.watering = true")
-    List<LocalDate> findWateringByPlantNumber(@Param("userPlant") UserPlant userPlant);
+//    @Query("SELECT DISTINCT s.createTime FROM Status s WHERE s.userPlant = :userPlant AND s.watering = true")
+    List<LocalDate> findDistinctCreateTimeByUserPlantAndWateringTrue(UserPlant userPlant);
 
     // 식물 번호로 최근 상태 1개 조회
-    @Query("SELECT s FROM Status s WHERE s.userPlant = :userPlant ORDER BY s.statusNumber DESC LIMIT 1")
-    Status findRecentStatusByUserPlant(@Param("userPlant") UserPlant userPlant);
+//    @Query("SELECT s FROM Status s WHERE s.userPlant = :userPlant ORDER BY s.statusNumber DESC LIMIT 1")
+    Status findFirstByUserPlantOrderByStatusNumberDesc(UserPlant userPlant);
 
     // 특정 날짜에 생성된 상태 리스트 리턴
-    @Query("SELECT s FROM Status s WHERE s.createTime BETWEEN :start AND :end")
-    List<Status> findAllByStatusCreateTimeBetween(        @Param("start") LocalDateTime start,
-                                                          @Param("end") LocalDateTime end);
+//    @Query("SELECT s FROM Status s WHERE s.createTime BETWEEN :start AND :end")
+    List<Status> findAllByCreateTimeBetween(LocalDateTime start, LocalDateTime end);
 
     List<Status> findAllByUserPlantAndCreateTimeBetween(UserPlant userPlant, LocalDateTime start, LocalDateTime end);
 }

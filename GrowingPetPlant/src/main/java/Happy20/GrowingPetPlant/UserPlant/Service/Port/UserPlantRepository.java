@@ -15,6 +15,8 @@ public interface UserPlantRepository extends JpaRepository<UserPlant, Long> {
     List<UserPlant> findAllByUser(User user);
     UserPlant findByUserPlantNumber(Long userPlantNumber);
 
+    UserPlant findFirstByUserOrderByUserPlantNumberAsc(User user);
+
     // 식물 번호로 물 준 날짜 리스트 리턴
     @Query("SELECT DISTINCT s.userPlant FROM Status s")
     List<Long> findAllByuserPlant();
