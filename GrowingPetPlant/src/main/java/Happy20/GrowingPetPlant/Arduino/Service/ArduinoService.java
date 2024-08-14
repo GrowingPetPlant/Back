@@ -1,8 +1,11 @@
 package Happy20.GrowingPetPlant.Arduino.Service;
 
 import Happy20.GrowingPetPlant.Arduino.DTO.PostWateringReq;
+import Happy20.GrowingPetPlant.Plant.Domain.Plant;
 import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
+import Happy20.GrowingPetPlant.User.Domain.User;
+import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import lombok.AllArgsConstructor;
@@ -10,11 +13,13 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -43,6 +48,7 @@ public class ArduinoService {
     // 팬 끄기 메시지
     private static final String FAN_OFF = "0";
 
+    private final UserRepository userRepository;
     private final UserPlantRepository userPlantRepository;
     private final StatusRepository statusRepository;
 
@@ -212,5 +218,49 @@ public class ArduinoService {
             return (true);
         else
             return (false);
+    }
+
+
+    // 매일 자동화 수행
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    public void automationOfGreenHouse()
+    {
+        // 모든 유저 리스트 가져오기
+        List<User> userList = userRepository.findAll();
+
+        // 유저 번호 순회하며 자동화 설정 여부 확인
+        for (User user : userList) {
+            if (user.getAuto()) {
+
+                // 자동화 설정한 유저의 유저 - 식물 순회하며 최적 상태인지 확인
+                List<UserPlant> userPlantList = userPlantRepository.findAllByUser(user);
+                for (UserPlant userPlant : userPlantList) {
+                    Status status = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
+                    Plant plant = userPlant.getPlant();
+
+                    // 최적 상태가 아니면 자동화 로직 수행
+                    // 최고 온도, 최적 대기 습도보다 높고, 팬 OFF인 경우 -> 팬 작동
+                    if ((status.getTemperature() > plant.getHighTemp() || (status.getMoisture() > plant.getOptMoisture() + 5))
+                            && !status.getFan())
+                    {
+                        fanningPlant(userPlant.getUserPlantNumber());
+                        System.out.println("자동화 로직 : 팬 ON\n");
+                    }
+                    // 최저 온도, 최적 대기 습도보다 낮고, 팬 ON인 경우 -> 팬 끄기
+                    else if ((status.getTemperature() < plant.getLowTemp() || (status.getMoisture() < plant.getOptMoisture() - 5))
+                            && status.getFan())
+                    {
+                        fanningPlant(userPlant.getUserPlantNumber());
+                        System.out.println("자동화 로직 : 팬 OFF\n");
+                    }
+                    // 최적 토양 습도보다 낮은 경우 -> 수분 공급
+                    else if ((status.getHumidity() < plant.getOptMoisture() - 5))
+                    {
+                        wateringPlant(new PostWateringReq(userPlant.getUserPlantNumber(), LocalDate.now()));
+                        System.out.println("자동화 로직 : 수분 공급\n");
+                    }
+                }
+            }
+        }
     }
 }

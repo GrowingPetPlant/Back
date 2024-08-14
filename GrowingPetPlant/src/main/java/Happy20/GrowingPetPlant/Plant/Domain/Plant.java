@@ -24,12 +24,24 @@ public class Plant {
     @Column(name = "plant_type")
     private String plantType;
 
-    @Column(name = "period")
-    private Long period;
+    @Column(name = "growth_period")
+    private Long growthPeriod;
+
+    @Column(name = "high_temp")
+    private Long highTemp;
+
+    @Column(name = "low_temp")
+    private Long lowTemp;
+
+    @Column(name = "opt_moisture")
+    private Long optMoisture;
 
     @Builder
-    public Plant(String plantType, Long period) {
+    public Plant(String plantType, Long growthPeriod, Long highTemp,  Long lowTemp, Long optMoisture) {
         this.plantType = plantType;
-        this.period = period;
+        this.growthPeriod = growthPeriod;
+        this.highTemp = highTemp;
+        this.lowTemp = lowTemp;
+        this.optMoisture = optMoisture;
     }
 }

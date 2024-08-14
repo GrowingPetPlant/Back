@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,11 +100,11 @@ public class UserService {
 
     // 유효한 아이디인지 확인
     @Transactional
-    public boolean validateId(String id) { return !userRepository.existsById(id); }
+    public boolean validateId(String id) { return userRepository.existsById(id); }
 
     // 유효한 닉네임인지 확인
     @Transactional
-    public boolean validateName(String name) { return !userRepository.existsByUserName(name); }
+    public boolean validateName(String name) { return userRepository.existsByUserName(name); }
 
     // 유저 번호 동일한지 확인
     @Transactional
@@ -191,4 +192,5 @@ public class UserService {
             throw new IllegalArgumentException("해당 사용자를 찾을 수 없습니다.");
         }
     }
+
 }

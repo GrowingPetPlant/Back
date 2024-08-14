@@ -38,6 +38,12 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "auto")
+    private Boolean auto;
+
+    @Column(name = "notification")
+    private Boolean notification;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<UserPlant> plantsList = new ArrayList<>();
@@ -52,6 +58,8 @@ public class User {
         this.password = password;
         this.userName = userName;
         this.phoneNumber = phoneNumber;
+        this.auto = false;
+        this.notification = false;
         this.authority = ROLE_USER;
     }
 }
