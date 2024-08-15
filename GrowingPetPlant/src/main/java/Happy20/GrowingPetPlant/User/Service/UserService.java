@@ -85,13 +85,18 @@ public class UserService {
 
     // 홈 화면 정보 리턴
     @Transactional
-    public GetHomeInfoRes getHomeInfo(String id) {
+    public List<GetHomeInfoRes> getHomeInfo(String id, List<GetHomeInfoRes> getHomeInfoResList) {
         User user = userRepository.findById(id);
-        UserPlant userPlant = userPlantRepository.findFirstByUserOrderByUserPlantNumberAsc(user);
-        Status status = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
+        List<UserPlant> userPlantList = userPlantRepository.findAllByUser(user);
 
-        return (new GetHomeInfoRes("유저 홈 화면 정보입니다.\n", user.getUserNumber(), userPlant.getUserPlantNumber(),
-                userPlant.getUserPlantName(), status.getMoisture(), status.getHumidity(), status.getTemperature()));
+        for (UserPlant userPlant : userPlantList)
+        {
+            Status status = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
+            getHomeInfoResList.add(new GetHomeInfoRes(user.getUserName() + " 유저 홈 화면 정보입니다.\n", user.getUserNumber(),
+                    userPlant.getUserPlantNumber(), userPlant.getUserPlantName(), status.getMoisture(), status.getHumidity(), status.getTemperature()));
+        }
+
+        return (getHomeInfoResList);
     }
 
     // 유효한 유저인지 확인
