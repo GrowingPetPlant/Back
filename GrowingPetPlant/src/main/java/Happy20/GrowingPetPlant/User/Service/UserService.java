@@ -2,25 +2,25 @@ package Happy20.GrowingPetPlant.User.Service;
 
 import Happy20.GrowingPetPlant.JWT.JwtProvider;
 import Happy20.GrowingPetPlant.JWT.TokenDto;
-import Happy20.GrowingPetPlant.Status.Controller.StatusController;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Domain.User;
+import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
-import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -32,6 +32,11 @@ public class UserService {
     private final StatusRepository statusRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final StringRedisTemplate redisTemplate;
+
+    private final String PREFIX_LOGOUT = "LOGOUT:";
+    private final String PREFIX_LOGOUT_REFRESH = "LOGOUT_REFRESH:";
+
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     // 토큰 정보 리턴
@@ -41,7 +46,7 @@ public class UserService {
         TokenDto jwtToken = jwtProvider.generateToken(loginUser);
 
         // 액세스 토큰 발급
-        log.info("request email = {}, password = {}", loginUser.getId(), loginUser.getPassword());
+        log.info("request id = {}, password = {}", loginUser.getId(), loginUser.getPassword());
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
         // Header에 정보 넘겨주기
@@ -81,6 +86,21 @@ public class UserService {
         }
         else
             return (new PostLoginRes("잘못된 비밀번호입니다.\n", null));
+    }
+
+    // 로그아웃
+    @Transactional
+    public void logoutMember(HttpServletRequest request, String id) {
+
+        String accessToken = jwtProvider.resolveAccessToken(request);
+        String refreshToken = jwtProvider.resolveRefreshToken(request);
+        Date accessExpiration = jwtProvider.parseClaims(accessToken).getExpiration();
+        Date refreshExpiration = jwtProvider.parseClaims(refreshToken).getExpiration();
+
+        redisTemplate.opsForValue()
+                .set(PREFIX_LOGOUT + id, accessToken, Duration.ofSeconds(accessExpiration.getTime() - new Date().getTime()));
+        redisTemplate.opsForValue()
+                .set(PREFIX_LOGOUT_REFRESH + id, refreshToken, Duration.ofSeconds(refreshExpiration.getTime() - new Date().getTime()));
     }
 
     // 홈 화면 정보 리턴

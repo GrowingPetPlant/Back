@@ -80,6 +80,25 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(userService.validationLogin(user, postLoginReq.getPassword(), response));
     }
 
+    // 로그아웃 api
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(Authentication principal, HttpServletRequest request) {
+
+        if (principal == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 유저 정보입니다.\n");
+
+        userService.logoutMember(request, principal.getName());
+
+        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 처리되었습니다.\n");
+    }
+
+    // 회원 탈퇴 api
+    @DeleteMapping("/delete/{id}")
+    public String deleteUser(@PathVariable String id){
+        userService.deleteUser(id);
+        return id+ " 사용자 탈퇴가 완료되었습니다.";
+    }
+
     // 홈 화면 정보 api
     @GetMapping("/home")
     public ResponseEntity<List<GetHomeInfoRes>> homeInfo(Authentication principal) {
@@ -131,22 +150,5 @@ public class UserController {
                     "사용자의 비밀번호는\n [" + userPwd + "] 입니다.");
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자입니다.");
-    }
-
-    // 로그아웃 api
-    @GetMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request){
-        //세션 무효화
-        request.getSession().invalidate();
-
-        //클라이언트에게 로그아웃 성공 메시지와 HTTP 상태 코드 반환
-        return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);
-    }
-
-    // 회원 탈퇴 api
-    @DeleteMapping("/delete/{id}")
-    public String deleteUser(@PathVariable String id){
-        userService.deleteUser(id);
-        return id+ " 사용자 탈퇴가 완료되었습니다.";
     }
 }
