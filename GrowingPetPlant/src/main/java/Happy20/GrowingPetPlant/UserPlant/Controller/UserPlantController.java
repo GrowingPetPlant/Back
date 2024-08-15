@@ -2,6 +2,7 @@ package Happy20.GrowingPetPlant.UserPlant.Controller;
 
 import Happy20.GrowingPetPlant.User.Domain.User;
 import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
+import Happy20.GrowingPetPlant.UserPlant.DTO.PatchChangeUserPlantNameReq;
 import Happy20.GrowingPetPlant.UserPlant.DTO.PostCreateUserPlantReq;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
@@ -13,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 @RestController
 @RequestMapping("userplant")
@@ -22,6 +24,7 @@ public class UserPlantController {
     private final UserPlantRepository userPlantRepository;
     private final UserRepository userRepository;
 
+    // 유저 식물 정보 추가
     @PostMapping("/add")
     public ResponseEntity<String> createUserPlant(@RequestBody PostCreateUserPlantReq postCreateUserPlantReq, Authentication principal) {
         if (principal == null)
@@ -37,11 +40,7 @@ public class UserPlantController {
         return ResponseEntity.status(HttpStatus.CONFLICT).body("식물 정보를 생성했습니다.\n");
     }
 
-    @GetMapping("/findAllPlant")
-    public List<Long> findAllPlant() {
-        return userPlantService.findAllPlantNumber();
-    }
-
+    // 유저 식물 정보 삭제
     @DeleteMapping("/delete/{userPlantNumber}")
     public ResponseEntity<String> deleteUserPlant(@PathVariable("userPlantNumber") Long userPlantNumber, Authentication principal)
     {
@@ -53,6 +52,25 @@ public class UserPlantController {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body("존재하지 않는 식물 정보입니다.\n");
     }
+
+    // 유저 식물 이름 변경
+    @PatchMapping("/change-name")
+    public ResponseEntity<String> changeName(@RequestBody PatchChangeUserPlantNameReq patchChangeUserPlantNameReq, Authentication principal)
+    {
+        if (principal == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 유저 정보입니다.\n");
+
+        if (userPlantService.changePlantName(patchChangeUserPlantNameReq))
+            return ResponseEntity.status(HttpStatus.OK).body("유저 식물 이름을 변경했습니다.\n");
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("존재하지 않는 식물 정보입니다.\n");
+    }
+
+    @GetMapping("/findAllPlant")
+    public List<Long> findAllPlant() {
+        return userPlantService.findAllPlantNumber();
+    }
+
 
 //    // 유저번호 -> 식물정보찾기
 //    @GetMapping("/findUserPlant")

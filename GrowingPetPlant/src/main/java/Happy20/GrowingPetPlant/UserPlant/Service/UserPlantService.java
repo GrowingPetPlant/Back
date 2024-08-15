@@ -7,6 +7,7 @@ import Happy20.GrowingPetPlant.Plant.PlantRepository;
 import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import Happy20.GrowingPetPlant.User.Domain.User;
+import Happy20.GrowingPetPlant.UserPlant.DTO.PatchChangeUserPlantNameReq;
 import Happy20.GrowingPetPlant.UserPlant.DTO.PostCreateUserPlantReq;
 import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
@@ -74,6 +75,20 @@ public class UserPlantService {
 
         return (true);
     }
+
+    @Transactional
+    public Boolean changePlantName(PatchChangeUserPlantNameReq patchChangeUserPlantNameReq) {
+
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(patchChangeUserPlantNameReq.getUserPlantNumber());
+        if (userPlant == null)
+            return (false);
+
+        userPlant.setUserPlantName(patchChangeUserPlantNameReq.getUserPlantName());
+        userPlantRepository.save(userPlant);
+
+        return (true);
+    }
+
 //    @Transactional
 //    public UserPlant validateUserPlant(Long userNumber) {
 //        return userPlantRepository.findByUserNumber(userNumber);
