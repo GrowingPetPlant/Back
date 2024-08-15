@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PlantRepository extends JpaRepository<Plant, Long> {
     Plant findPlantByPlantType(String plantType);
+    Plant findPlantByPlantNumber(Long plantNumber);
 }
