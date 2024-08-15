@@ -13,6 +13,8 @@ import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.pulsar.PulsarProperties;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +63,17 @@ public class UserPlantService {
     }
 
 
+    @Transactional
+    public Boolean deletePlant(Long userPlantNumber)
+    {
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
+        if (userPlant == null)
+            return (false);
+
+        userPlantRepository.delete(userPlant);
+
+        return (true);
+    }
 //    @Transactional
 //    public UserPlant validateUserPlant(Long userNumber) {
 //        return userPlantRepository.findByUserNumber(userNumber);
