@@ -37,7 +37,7 @@ public class UserPlantController {
 
         userPlantService.createUserPlant(user, postCreateUserPlantReq.getUserPlantName(), postCreateUserPlantReq.getPlantType()); // 유저-식물 정보 생성
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("식물 정보를 생성했습니다.\n");
+        return ResponseEntity.status(HttpStatus.OK).body("식물 정보를 생성했습니다.\n");
     }
 
     // 유저 식물 정보 삭제

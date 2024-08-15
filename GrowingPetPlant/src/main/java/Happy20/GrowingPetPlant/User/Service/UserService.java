@@ -2,6 +2,8 @@ package Happy20.GrowingPetPlant.User.Service;
 
 import Happy20.GrowingPetPlant.JWT.JwtProvider;
 import Happy20.GrowingPetPlant.JWT.TokenDto;
+import Happy20.GrowingPetPlant.Plant.Domain.Plant;
+import Happy20.GrowingPetPlant.Plant.PlantRepository;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
@@ -29,6 +31,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserPlantRepository userPlantRepository;
+    private final PlantRepository plantRepository;
     private final StatusRepository statusRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
@@ -112,8 +115,8 @@ public class UserService {
         for (UserPlant userPlant : userPlantList)
         {
             Status status = statusRepository.findFirstByUserPlantOrderByStatusNumberDesc(userPlant);
-            getHomeInfoResList.add(new GetHomeInfoRes(user.getUserName() + " 유저 홈 화면 정보입니다.\n", user.getUserNumber(),
-                    userPlant.getUserPlantNumber(), userPlant.getUserPlantName(), status.getMoisture(), status.getHumidity(), status.getTemperature()));
+            getHomeInfoResList.add(new GetHomeInfoRes(user.getUserName() + " 유저 홈 화면 정보입니다.\n", user.getUserNumber(), userPlant.getUserPlantNumber(),
+                    userPlant.getPlant().getPlantType(), userPlant.getUserPlantName(), status.getMoisture(), status.getHumidity(), status.getTemperature()));
         }
 
         return (getHomeInfoResList);

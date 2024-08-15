@@ -13,6 +13,7 @@ public class GetHomeInfoRes {
     String message;
     Long userNumber;
     Long userPlantNumber;
+    String userPlantType;
     String userPlantName;
     Double moisture;
     Double humidity;
@@ -24,11 +25,12 @@ public class GetHomeInfoRes {
     }
 
     @Builder(builderMethodName = "HomeInfoBuilder")
-    public GetHomeInfoRes(String message, Long userNumber, Long userPlantNumber, String userPlantName,
-                          Double moisture, Double humidity, Double temperature) {
+    public GetHomeInfoRes(String message, Long userNumber, Long userPlantNumber, String userPlantType,
+                          String userPlantName, Double moisture, Double humidity, Double temperature) {
         this.message = message;
         this.userNumber = userNumber;
         this.userPlantNumber = userPlantNumber;
+        this.userPlantType = userPlantType;
         this.userPlantName = userPlantName;
         this.moisture = moisture;
         this.humidity = humidity;
