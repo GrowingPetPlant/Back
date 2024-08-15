@@ -1,12 +1,10 @@
 package Happy20.GrowingPetPlant.User.Controller;
 
-import Happy20.GrowingPetPlant.Status.Domain.Status;
 import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
 import Happy20.GrowingPetPlant.User.Service.UserService;
 import Happy20.GrowingPetPlant.User.Domain.User;
-import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
 import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import Happy20.GrowingPetPlant.UserPlant.Service.UserPlantService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +17,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("user")
 @RequiredArgsConstructor
@@ -27,8 +28,6 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final UserPlantService userPlantService;
-    private final UserPlantRepository userPlantRepository;
-    private final StatusRepository statusRepository;
 
     // 회원가입 api
     @PostMapping("/sign-up")
@@ -83,11 +82,13 @@ public class UserController {
 
     // 홈 화면 정보 api
     @GetMapping("/home")
-    public ResponseEntity<GetHomeInfoRes> homeInfo(Authentication principal) {
-        if (principal == null)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GetHomeInfoRes("잘못된 유저 정보입니다.\n"));
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(userService.getHomeInfo(principal.getName()));
+    public ResponseEntity<List<GetHomeInfoRes>> homeInfo(Authentication principal) {
+        List<GetHomeInfoRes> homeInfoResList = new ArrayList<>();
+        if (principal == null) {
+            homeInfoResList.add(new GetHomeInfoRes("잘못된 유저 정보입니다.\n"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(homeInfoResList);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getHomeInfo(principal.getName(), homeInfoResList));
     }
 
     // 마이페이지 수정 api
