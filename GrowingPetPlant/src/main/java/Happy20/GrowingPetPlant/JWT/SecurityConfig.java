@@ -28,7 +28,8 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/user/login", "/user/sign-up",
-                        "/user/id-check", "/user/name-check"
+                        "/user/id-check", "/user/name-check",
+                        "user/findId", "user/findPwd"
                 ).permitAll()
                 .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),

@@ -124,11 +124,7 @@ public class UserController {
 
     // 아이디 찾기 api
     @PostMapping("/findId")
-    public ResponseEntity<String> findId(@RequestBody GetFindUserIdReq getFindUserIdReq, Authentication principal) {
-
-        // 로그인 정보 확인
-        if (principal == null)
-            return (ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 유저 정보입니다.\n"));
+    public ResponseEntity<String> findId(@RequestBody GetFindUserIdReq getFindUserIdReq) {
 
         String userId = userService.matchUserId(getFindUserIdReq);
         if (userId != null)
@@ -140,12 +136,7 @@ public class UserController {
 
     // 비밀번호 찾기 api
     @PostMapping("/findPwd")
-    public ResponseEntity<String> findPwd(@RequestBody GetFindUserPwdReq getFindUserPwdReq, Authentication principal) {
-
-        // 로그인 정보 확인
-        if (principal == null)
-            return (ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 유저 정보입니다.\n"));
-
+    public ResponseEntity<String> findPwd(@RequestBody GetFindUserPwdReq getFindUserPwdReq) {
         String userPwd = userService.matchUserPwd(getFindUserPwdReq);
         if (userPwd != null)
             return ResponseEntity.status(HttpStatus.OK).body(getFindUserPwdReq.getUserName() +
