@@ -149,16 +149,6 @@ public class UserService {
 
         // 아이디는 변경 불가 -> 아이디 바꾸지 않은 경우
         if (user.equals(userRepository.findById(patchUpdateMyPageReq.getId()))) {
-//            if (patchUpdateMyPageReq.getPassword() != null) {
-//                user.setPassword(patchUpdateMyPageReq.getPassword());
-//            }
-//            if (patchUpdateMyPageReq.getUserName() != null) {
-//                user.setUserName(patchUpdateMyPageReq.getUserName());
-//            }
-//            if (patchUpdateMyPageReq.getPhoneNumber() != null) {
-//                user.setPhoneNumber(patchUpdateMyPageReq.getPhoneNumber());
-//            }
-
             // 비밀번호 암호화
             String encodePw = passwordEncoder.encode(patchUpdateMyPageReq.getPassword());
 
@@ -175,26 +165,6 @@ public class UserService {
             return (ResponseEntity.status(HttpStatus.NOT_FOUND).body("아이디는 변경할 수 없습니다.\n"));
     }
 
-    // 유효한 유저인지 확인
-    @Transactional
-    public User validateUser(Long userNumber) { return userRepository.findByUserNumber(userNumber); }
-
-    // 유효한 아이디인지 확인
-    @Transactional
-    public boolean validateId(String id) { return userRepository.existsById(id); }
-
-    // 유효한 닉네임인지 확인
-    @Transactional
-    public boolean validateName(String name) { return userRepository.existsByUserName(name); }
-
-    // 유저 번호 동일한지 확인
-    @Transactional
-    public boolean checkUserNumberEquality(Long prevUserNumber, Long nowUserNumber) {
-        if (prevUserNumber.equals(nowUserNumber))
-            return (true);
-        else
-            return (false);
-    }
 
     // 유저 아이디 찾기
     public String matchUserId(GetFindUserIdReq getFindUserIdReq) {
@@ -223,5 +193,18 @@ public class UserService {
         else
             return (null);
     }
+
+    // 유효한 유저인지 확인
+    @Transactional
+    public User validateUser(Long userNumber) { return userRepository.findByUserNumber(userNumber); }
+
+    // 유효한 아이디인지 확인
+    @Transactional
+    public boolean validateId(String id) { return userRepository.existsById(id); }
+
+    // 유효한 닉네임인지 확인
+    @Transactional
+    public boolean validateName(String name) { return userRepository.existsByUserName(name); }
+
 
 }

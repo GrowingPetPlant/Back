@@ -122,17 +122,6 @@ public class UserController {
         return (userService.validateUpdateMyPage(patchUpdateMyPageReq, principal));
     }
 
-    // 유저 번호 -> 유저 찾기 api
-    @GetMapping("/findUser")
-    public ResponseEntity<User> findUser(@RequestParam("userNumber") Long userNumber) {
-        User user = userService.validateUser(userNumber);
-
-        if (user == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        else
-            return ResponseEntity.status(HttpStatus.OK).body(user);
-    }
-
     // 아이디 찾기 api
     @PostMapping("/findId")
     public ResponseEntity<String> findId(@RequestBody GetFindUserIdReq getFindUserIdReq) {
@@ -153,5 +142,16 @@ public class UserController {
                     "사용자의 비밀번호는\n [" + userPwd + "] 입니다.");
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자입니다.");
+    }
+
+    // 유저 번호 -> 유저 찾기 api
+    @GetMapping("/findUser")
+    public ResponseEntity<User> findUser(@RequestParam("userNumber") Long userNumber) {
+        User user = userService.validateUser(userNumber);
+
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        else
+            return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 }
