@@ -1,11 +1,9 @@
 package Happy20.GrowingPetPlant.User.Controller;
 
-import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import Happy20.GrowingPetPlant.User.DTO.*;
 import Happy20.GrowingPetPlant.User.Service.Port.UserRepository;
 import Happy20.GrowingPetPlant.User.Service.UserService;
 import Happy20.GrowingPetPlant.User.Domain.User;
-import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import Happy20.GrowingPetPlant.UserPlant.Service.UserPlantService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,9 +31,8 @@ public class UserController {
     @PostMapping("/sign-up")
     public ResponseEntity<String> signup(@Valid @RequestBody PostSignupReq postSignupReq, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효성 검사 오류: " + bindingResult.getAllErrors().get(0).getDefaultMessage() + "\n");
-        }
 
         if (userService.validateId(postSignupReq.getId()))
             return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 아이디입니다.");
@@ -94,9 +91,9 @@ public class UserController {
 
     // 회원 탈퇴 api
     @DeleteMapping("/delete/{id}")
-    public String deleteUser(@PathVariable String id){
+    public ResponseEntity<String> deleteUser(@PathVariable String id){
         userService.deleteUser(id);
-        return id+ " 사용자 탈퇴가 완료되었습니다.";
+        return (ResponseEntity.status(HttpStatus.OK).body(id + " 사용자 탈퇴가 완료되었습니다.\n"));
     }
 
     // 홈 화면 정보 api
@@ -112,11 +109,17 @@ public class UserController {
 
     // 마이페이지 수정 api
     @PatchMapping("/mypage")
-    public ResponseEntity<String> updateMyPage(@Valid @RequestBody PatchUpdateMyPageReq patchUpdateMyPageReq) {
-        if (userService.validateUpdateMyPage(patchUpdateMyPageReq)) {
-            return ResponseEntity.status(HttpStatus.OK).body("마이페이지가 수정됐습니다.");
-        } else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마이페이지를 수정할 수 없습니다.");
+    public ResponseEntity<String> updateMyPage(@Valid @RequestBody PatchUpdateMyPageReq patchUpdateMyPageReq, BindingResult bindingResult, Authentication principal) {
+
+        // 로그인 정보 확인
+        if (principal == null)
+            return (ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 유저 정보입니다.\n"));
+
+        // 유효성 검증
+        if (bindingResult.hasErrors())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효성 검사 오류: " + bindingResult.getAllErrors().get(0).getDefaultMessage() + "\n");
+
+        return (userService.validateUpdateMyPage(patchUpdateMyPageReq, principal));
     }
 
     // 유저 번호 -> 유저 찾기 api
