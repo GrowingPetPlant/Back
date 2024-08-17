@@ -156,6 +156,7 @@ public class UserService {
             user.setPassword(encodePw);
             user.setUserName(patchUpdateMyPageReq.getUserName());
             user.setPhoneNumber(patchUpdateMyPageReq.getPhoneNumber());
+            user.setAuto(patchUpdateMyPageReq.getAuto());
 
             userRepository.save(user);
 
