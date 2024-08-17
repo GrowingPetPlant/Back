@@ -27,12 +27,14 @@ public class PatchUpdateMyPageReq {
             message = "전화번호 형식은 000-0000-0000으로 입력해주세요.")
     private String phoneNumber;
 
+    private Boolean auto;
 
     @Builder
-    public PatchUpdateMyPageReq(String id, String password, String userName, String phoneNumber) {
+    public PatchUpdateMyPageReq(String id, String password, String userName, String phoneNumber, Boolean auto) {
         this.id = id;
         this.password = password;
         this.userName = userName;
         this.phoneNumber = phoneNumber;
+        this.auto = auto;
     }
 }

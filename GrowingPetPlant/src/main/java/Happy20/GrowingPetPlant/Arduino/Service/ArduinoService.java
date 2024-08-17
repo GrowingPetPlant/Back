@@ -239,22 +239,34 @@ public class ArduinoService {
                     Plant plant = userPlant.getPlant();
 
                     // 최적 상태가 아니면 자동화 로직 수행
-                    // 최고 온도, 최적 대기 습도보다 높고, 팬 OFF인 경우 -> 팬 작동
-                    if ((status.getTemperature() > plant.getHighTemp() || (status.getMoisture() > plant.getOptMoisture() + 5))
-                            && !status.getFan())
+                    // 최고 온도, 최적 대기 습도보다 높은 경우 -> 팬 ON 및 조명 OFF
+                    if (status.getTemperature() > plant.getHighTemp() || status.getMoisture() > plant.getOptMoisture() + 5)
                     {
-                        fanningPlant(userPlant.getUserPlantNumber());
-                        System.out.println("자동화 로직 : 팬 ON\n");
+                        if (status.getFan() == false) {
+                            fanningPlant(userPlant.getUserPlantNumber());
+                            System.out.println("자동화 로직 : 팬 ON\n");
+                        }
+
+                        if (status.getLight() == true) {
+                            lightingPlant(userPlant.getUserPlantNumber());
+                            System.out.println("자동화 로직 : 조명 OFF\n");
+                        }
                     }
-                    // 최저 온도, 최적 대기 습도보다 낮고, 팬 ON인 경우 -> 팬 끄기
-                    else if ((status.getTemperature() < plant.getLowTemp() || (status.getMoisture() < plant.getOptMoisture() - 5))
-                            && status.getFan())
+                    // 최저 온도, 최적 대기 습도보다 낮은 경우 -> 팬 OFF 및 조명 ON
+                    else if (status.getTemperature() < plant.getLowTemp() || status.getMoisture() < plant.getOptMoisture() - 5)
                     {
-                        fanningPlant(userPlant.getUserPlantNumber());
-                        System.out.println("자동화 로직 : 팬 OFF\n");
+                        if (status.getFan() == true) {
+                            fanningPlant(userPlant.getUserPlantNumber());
+                            System.out.println("자동화 로직 : 팬 OFF\n");
+                        }
+
+                        if (status.getLight() == false) {
+                            lightingPlant(userPlant.getUserPlantNumber());
+                            System.out.println("자동화 로직 : 조명 ON\n");
+                        }
                     }
                     // 최적 토양 습도보다 낮은 경우 -> 수분 공급
-                    else if ((status.getHumidity() < plant.getOptMoisture() - 5))
+                    if ((status.getHumidity() < plant.getOptMoisture() - 5))
                     {
                         wateringPlant(new PostWateringReq(userPlant.getUserPlantNumber(), LocalDate.now()));
                         System.out.println("자동화 로직 : 수분 공급\n");
