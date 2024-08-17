@@ -67,7 +67,8 @@ public class UserPlantController {
     }
 
     @GetMapping("/findAllPlant")
-    public List<Long> findAllPlant() {
+    public List<Long> findAllPlant(Authentication principal) {
+
         return userPlantService.findAllPlantNumber();
     }
 
