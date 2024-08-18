@@ -49,11 +49,11 @@ public class UserService {
     @Transactional
     public User createUser(PostSignupReq postSignupReq) {
 
-        String encodePw = passwordEncoder.encode(postSignupReq.getPassword());
+//        String encodePw = passwordEncoder.encode(postSignupReq.getPassword());
 
         User newUser = User.builder()
                 .id(postSignupReq.getId())
-                .password(encodePw)
+                .password(postSignupReq.getPassword())
                 .userName(postSignupReq.getUserName())
                 .phoneNumber(postSignupReq.getPhoneNumber())
                 .build();
@@ -83,15 +83,14 @@ public class UserService {
 
     // 로그인 확인
     @Transactional
-    public PostLoginRes validationLogin(User user, String password, HttpServletResponse response) {
+    public ResponseEntity<PostLoginRes> validationLogin(User user, String password, HttpServletResponse response) {
 
-        if (passwordEncoder.matches(password, user.getPassword())) {
+        if (user.getPassword().equals(password)) {
             // 토큰 생성 및 헤더에 토큰 정보 추가
             TokenDto token = setTokenInHeader(user, response);
-            return (new PostLoginRes("로그인에 성공했습니다.\n", token));
+            return (ResponseEntity.status(HttpStatus.OK).body(new PostLoginRes("로그인에 성공했습니다.\n", token)));
         }
-        else
-            return (new PostLoginRes("잘못된 비밀번호입니다.\n", null));
+        return ResponseEntity.status(HttpStatus.OK).body(new PostLoginRes("잘못된 비밀번호입니다.\n", null));
     }
 
     // 로그아웃
@@ -150,10 +149,10 @@ public class UserService {
         // 아이디는 변경 불가 -> 아이디 바꾸지 않은 경우
         if (user.equals(userRepository.findById(patchUpdateMyPageReq.getId()))) {
             // 비밀번호 암호화
-            String encodePw = passwordEncoder.encode(patchUpdateMyPageReq.getPassword());
+//            String encodePw = passwordEncoder.encode(patchUpdateMyPageReq.getPassword());
 
             // 유저 정보 수정
-            user.setPassword(encodePw);
+            user.setPassword(patchUpdateMyPageReq.getPassword());
             user.setUserName(patchUpdateMyPageReq.getUserName());
             user.setPhoneNumber(patchUpdateMyPageReq.getPhoneNumber());
             user.setAuto(patchUpdateMyPageReq.getAuto());
@@ -185,7 +184,6 @@ public class UserService {
     public String matchUserPwd(GetFindUserPwdReq getFindUserPwdReq) {
 
         User user = userRepository.findById(getFindUserPwdReq.getId());
-
         if (user == null)
             return (null);
 
