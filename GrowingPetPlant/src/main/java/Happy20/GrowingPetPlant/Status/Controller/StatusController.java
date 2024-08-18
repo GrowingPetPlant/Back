@@ -2,6 +2,8 @@ package Happy20.GrowingPetPlant.Status.Controller;
 
 import Happy20.GrowingPetPlant.Arduino.Service.ArduinoService;
 import Happy20.GrowingPetPlant.Status.Service.StatusService;
+import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
+import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 public class StatusController {
     private final StatusService statusService;
     private final ArduinoService arduinoService;
+    private final UserPlantRepository userPlantRepository;
 
     // 식물 최근 온도 확인 api
     @GetMapping("/temp")
@@ -68,11 +71,16 @@ public class StatusController {
     public ResponseEntity<List<LocalDate>> getWateringDates(@RequestParam("plantNumber") Long plantNumber, Authentication principal) {
 
         List list = new ArrayList();
+
         // 로그인 정보 확인
         if (principal == null)
             return (ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
 
-        return ResponseEntity.status(HttpStatus.OK).body(statusService.getWateringDate(plantNumber));
+        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(plantNumber);
+        if (userPlant == null)
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(statusService.getWateringDate(userPlant));
     }
 
 

@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.time.temporal.ChronoUnit;
 
@@ -73,19 +75,18 @@ public class StatusService {
 
     // 식물 물 준 날짜 가져오기
     @Transactional
-    public List<LocalDate> getWateringDate(Long userPlantNumber) {
+    public List<LocalDate> getWateringDate(UserPlant userPlant) {
 
-//        List<LocalDate> localDateList = new ArrayList<>();
-//
-//        // Date를 LocalDate로 변환
-//        // 변환 안할 경우 제대로 출력 X
-//        for (Date date : DateList) {
-//            LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//            localDateList.add(localDate);
-//        }
+        List<LocalDate> localDateList = new ArrayList<>();
+        List<LocalDateTime> list = statusRepository.findDistinctCreateTimeByUserPlantAndWateringTrue(userPlant);
 
-        UserPlant userPlant = userPlantRepository.findByUserPlantNumber(userPlantNumber);
-        return statusRepository.findDistinctCreateTimeByUserPlantAndWateringTrue(userPlant);
+        for (LocalDateTime dateTime : list)
+        {
+            LocalDate date = dateTime.toLocalDate();
+            localDateList.add(date);
+        }
+
+        return (localDateList);
     }
 
     @Transactional

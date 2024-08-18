@@ -14,8 +14,8 @@ import java.util.List;
 public interface StatusRepository extends JpaRepository<Status, Long> {
 
     // 식물 번호로 물 준 날짜 리스트 리턴
-//    @Query("SELECT DISTINCT s.createTime FROM Status s WHERE s.userPlant = :userPlant AND s.watering = true")
-    List<LocalDate> findDistinctCreateTimeByUserPlantAndWateringTrue(UserPlant userPlant);
+    @Query("SELECT DISTINCT s.createTime FROM Status s WHERE s.userPlant = :userPlant AND s.watering = true")
+    List<LocalDateTime> findDistinctCreateTimeByUserPlantAndWateringTrue(UserPlant userPlant);
 
     // 식물 번호로 최근 상태 1개 조회
 //    @Query("SELECT s FROM Status s WHERE s.userPlant = :userPlant ORDER BY s.statusNumber DESC LIMIT 1")
