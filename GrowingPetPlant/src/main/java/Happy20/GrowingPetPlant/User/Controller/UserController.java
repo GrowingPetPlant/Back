@@ -37,7 +37,7 @@ public class UserController {
         if (userService.validateId(postSignupReq.getId()))
             return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 아이디입니다.");
 
-        if (userService.validateName(postSignupReq.getId()))
+        if (userService.validateName(postSignupReq.getUserName()))
             return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 닉네임입니다.");
 
         User newUser = userService.createUser(postSignupReq); // 유저 정보 생성
@@ -74,7 +74,7 @@ public class UserController {
         if (user == null)
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new PostLoginRes("잘못된 유저 정보입니다.\n", null));
         else
-            return ResponseEntity.status(HttpStatus.OK).body(userService.validationLogin(user, postLoginReq.getPassword(), response));
+            return (userService.validationLogin(user, postLoginReq.getPassword(), response));
     }
 
     // 로그아웃 api
