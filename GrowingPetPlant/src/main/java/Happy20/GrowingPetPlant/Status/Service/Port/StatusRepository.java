@@ -26,4 +26,12 @@ public interface StatusRepository extends JpaRepository<Status, Long> {
     List<Status> findAllByCreateTimeBetween(LocalDateTime start, LocalDateTime end);
 
     List<Status> findAllByUserPlantAndCreateTimeBetween(UserPlant userPlant, LocalDateTime start, LocalDateTime end);
+List<Status> findAllByUserPlantAndCreateTimeBetweenAndTemperatureNotAndHumidityNotAndMoistureNot(
+        UserPlant userPlant,
+        LocalDateTime start,
+        LocalDateTime end,
+        double temperature,
+        double humidity,
+        double moisture
+);
 }
