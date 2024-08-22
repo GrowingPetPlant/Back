@@ -58,7 +58,7 @@ public class GraphService {
 
         for (UserPlant userPlant : userPlantList)
         {
-            List<Status> dawnStatus = statusRepository.findAllByUserPlantAndCreateTimeBetween(userPlant, startTime, endTime);
+            List<Status> dawnStatus = statusRepository.findAllByUserPlantAndCreateTimeBetweenAndTemperatureNotAndHumidityNotAndMoistureNot(userPlant, startTime, endTime, 0.0, 0.0, 0.0);
             Double tempDawn = 0D, moistureDawn = 0D, humiDawn = 0D;
 
             // 유저 별로 평균 내기
@@ -98,7 +98,7 @@ public class GraphService {
 
         for (UserPlant userPlant : userPlantList)
         {
-            List<Status> morningStatus = statusRepository.findAllByUserPlantAndCreateTimeBetween(userPlant, startTime, endTime);
+            List<Status> morningStatus = statusRepository.findAllByUserPlantAndCreateTimeBetweenAndTemperatureNotAndHumidityNotAndMoistureNot(userPlant, startTime, endTime, 0.0, 0.0, 0.0);
             Double tempMorning = 0D, moistureMorning = 0D, humiMorning = 0D;
 
             // 유저 별로 평균 내기
@@ -138,7 +138,7 @@ public class GraphService {
 
         for (UserPlant userPlant : userPlantList)
         {
-            List<Status> dayStatus = statusRepository.findAllByUserPlantAndCreateTimeBetween(userPlant, startTime, endTime);
+            List<Status> dayStatus = statusRepository.findAllByUserPlantAndCreateTimeBetweenAndTemperatureNotAndHumidityNotAndMoistureNot(userPlant, startTime, endTime, 0.0, 0.0, 0.0);
             Double tempDay = 0D, moistureDay = 0D, humiDay = 0D;
 
             // 유저 별로 평균 내기
@@ -178,7 +178,7 @@ public class GraphService {
 
         for (UserPlant userPlant : userPlantList)
         {
-            List<Status> nightStatus = statusRepository.findAllByUserPlantAndCreateTimeBetween(userPlant, startTime, endTime);
+            List<Status> nightStatus = statusRepository.findAllByUserPlantAndCreateTimeBetweenAndTemperatureNotAndHumidityNotAndMoistureNot(userPlant, startTime, endTime, 0.0, 0.0, 0.0);
             Double tempNight = 0D, moistureNight = 0D, humiNight = 0D;
 
             // 유저 별로 평균 내기
