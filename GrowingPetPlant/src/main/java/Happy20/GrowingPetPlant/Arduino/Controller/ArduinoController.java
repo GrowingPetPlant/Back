@@ -2,10 +2,8 @@ package Happy20.GrowingPetPlant.Arduino.Controller;
 
 import Happy20.GrowingPetPlant.Arduino.DTO.PostWateringReq;
 import Happy20.GrowingPetPlant.Arduino.Service.ArduinoService;
-import Happy20.GrowingPetPlant.Status.Service.Port.StatusRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

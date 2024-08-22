@@ -46,7 +46,6 @@ public class GrowingPetPlantApplication {
 				// 연결이 끊어졌을 때 처리할 작업
 			}
 
-
 			// 토픽 구조 예시 : userPlant/{userPlantId}/temperature
 			@Override
 			public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
@@ -94,6 +93,5 @@ public class GrowingPetPlantApplication {
 		subscriber.subscribe("userPlant/+/temperature", 0);
 		subscriber.subscribe("userPlant/+/humidity", 0);
 		subscriber.subscribe("userPlant/+/moisture", 0);
-
 	}
 }
