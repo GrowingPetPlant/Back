@@ -1,13 +1,10 @@
 package Happy20.GrowingPetPlant.Subscribe;
 
-import Happy20.GrowingPetPlant.UserPlant.Domain.UserPlant;
-import Happy20.GrowingPetPlant.UserPlant.Service.Port.UserPlantRepository;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,14 +18,14 @@ public class Subscriber {
     private MqttClient client;
     private MqttConnectOptions connOpts;
 
-    @Value("${spring.datasource.url")
-    private String DB_URL;
+//    @Value("${spring.datasource.url}")
+    private String DB_URL = "jdbc:mysql://34.64.250.250:3306/gpp";
 
-    @Value("${spring.datasource.username}")
-    private String DB_USER;
+//    @Value("${spring.datasource.username}")
+    private String DB_USER ="root";
 
-    @Value("${spring.datasource.password}")
-    private String DB_PASSWORD;
+//    @Value("${spring.datasource.password}")
+    private String DB_PASSWORD = "gpppassword";
 
     // Private 생성자로 외부에서 인스턴스 생성을 막음
     private Subscriber() {}
@@ -92,12 +89,18 @@ public class Subscriber {
             // 데이터를 삽입할 테이블 이름
             String query = "UPDATE status SET temperature = ?, humidity = ?, moisture = ? WHERE user_plant_number = ? ORDER BY status_number DESC LIMIT 1";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+
                 // 각 토픽의 값을 쿼리에 설정
                 pstmt.setDouble(1, Double.parseDouble(tempPayload));
                 pstmt.setDouble(2, Double.parseDouble(humiPayload));
                 pstmt.setDouble(3, Double.parseDouble(soilPayload));
                 pstmt.setLong(4, userPlantId);
                 pstmt.executeUpdate();
+
+                System.out.println("테스트 : " + tempPayload + "\n");
+                System.out.println("테스트 : " + humiPayload + "\n");
+                System.out.println("테스트 : " + soilPayload + "\n");
+                System.out.println("테스트 : " + userPlantId + "\n");
             }
         } catch (SQLException e) {
             log.error("Failed to insert data into database", e);

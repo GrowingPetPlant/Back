@@ -34,10 +34,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserPlantRepository userPlantRepository;
-    private final PlantRepository plantRepository;
     private final StatusRepository statusRepository;
     private final JwtProvider jwtProvider;
-    private final PasswordEncoder passwordEncoder;
     private final StringRedisTemplate redisTemplate;
 
     private final String PREFIX_LOGOUT = "LOGOUT:";

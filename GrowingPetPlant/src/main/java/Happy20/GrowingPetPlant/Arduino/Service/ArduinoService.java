@@ -239,7 +239,7 @@ public class ArduinoService {
                     Plant plant = userPlant.getPlant();
 
                     // 최적 상태가 아니면 자동화 로직 수행
-                    // 최고 온도, 최적 대기 습도보다 높은 경우 -> 팬 ON 및 조명 OFF
+                        // 최고 온도, 최적 대기 습도보다 높은 경우 -> 팬 ON 및 조명 OFF
                     if (status.getTemperature() > plant.getHighTemp() || status.getMoisture() > plant.getOptMoisture() + 5)
                     {
                         if (status.getFan() == false) {
