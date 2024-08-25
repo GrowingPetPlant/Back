@@ -24,7 +24,7 @@ GrowingPetPlant를 통해 식집사들이 부담을 덜고, 식물 가꾸기를 
 </br>
 
 ## 시스템 구조도
-<img width="894" alt="GPP_시스템구조도" src="https://github.com/user-attachments/assets/cfa73bdb-683f-4cd8-b157-e106841b4630">
+<img width="700" alt="GPP_시스템구조도" src="https://github.com/user-attachments/assets/40a24128-b765-4f17-a6c0-ff877fc9442a">
 </br>
 
 ## 주요 기능
