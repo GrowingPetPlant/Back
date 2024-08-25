@@ -21,6 +21,11 @@ GrowingPetPlant를 통해 식집사들이 부담을 덜고, 식물 가꾸기를 
 ## ERD
 ![gpp_uml](https://github.com/user-attachments/assets/5bc5a6dd-98c4-4251-9986-36c2de552f86)
 </br>
+</br>
+
+## 시스템 구조도
+<img width="894" alt="GPP_시스템구조도" src="https://github.com/user-attachments/assets/cfa73bdb-683f-4cd8-b157-e106841b4630">
+</br>
 
 ## 주요 기능
 - 식물 온실 온도, 대기 습도, 토양 습도 실시간 모니터링
